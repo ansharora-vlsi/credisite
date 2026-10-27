@@ -1,0 +1,161 @@
+dev_id,name,segment,city,region,rm,credit_terms_days,credit_limit,onboarded,trade_credit_insured,expected_monthly_billing
+DV1001,Silverline Infra Engineers,EPC contractor,Thane,MMR,Priya Kulkarni,60,33000000.0,2024-10-07,True,9403000.0
+DV1002,Konkan Builders,Small developer,Navi Mumbai,MMR,Rohit Menon,30,3000000.0,2024-10-07,False,1356000.0
+DV1003,Kaveri Developers,Mid-size developer,Mumbai,MMR,Rohit Menon,60,12000000.0,2024-10-07,True,3694000.0
+DV1004,Malabar Developers,Small developer,Pune,Pune,Neha Bansal,30,1000000.0,2024-10-07,False,532000.0
+DV1005,Sankalp Homes,Small developer,Mumbai,MMR,Rohit Menon,30,500000.0,2024-10-07,False,353000.0
+DV1006,Cauvery Builders,Small developer,Mumbai,MMR,Priya Kulkarni,45,1000000.0,2024-10-07,False,389000.0
+DV1007,Evergreen Realty,Mid-size developer,Pune,Pune,Vikram Desai,60,13000000.0,2024-10-07,True,4343000.0
+DV1008,Riddhi Builders,Small developer,Mumbai,MMR,Rohit Menon,45,1000000.0,2024-10-07,False,433000.0
+DV1009,Vishwas Developers,Mid-size developer,Bengaluru,South,Arjun Shetty,60,5500000.0,2026-03-02,True,1946000.0
+DV1010,Vastu Constructions,Small developer,Pune,Pune,Vikram Desai,30,500000.0,2024-10-07,True,301000.0
+DV1011,Nilgiri Housing,Mid-size developer,Thane,MMR,Priya Kulkarni,45,5500000.0,2024-10-07,True,3062000.0
+DV1012,Tulsi Realty,Large developer,Navi Mumbai,MMR,Rohit Menon,45,50500000.0,2024-10-07,False,19268000.0
+DV1013,Konkan Constructions,Small developer,Hyderabad,South,Arjun Shetty,30,2000000.0,2025-07-07,False,968000.0
+DV1014,Malabar Housing,Mid-size developer,Navi Mumbai,MMR,Rohit Menon,60,5000000.0,2024-11-04,True,2485000.0
+DV1015,Keystone Builders,Mid-size developer,Pune,Pune,Neha Bansal,45,13000000.0,2025-04-21,False,5452000.0
+DV1016,Granite Builders,Small developer,Thane,MMR,Priya Kulkarni,30,500000.0,2024-10-07,False,340000.0
+DV1017,Bluestone Realty,Large developer,Mumbai,MMR,Rohit Menon,45,38000000.0,2024-10-07,True,19536000.0
+DV1018,Vastu Builders,Small developer,Pune,Pune,Neha Bansal,30,1500000.0,2024-10-07,False,891000.0
+DV1019,Riddhi Lifespaces,Large developer,Pune,Pune,Vikram Desai,60,42000000.0,2024-11-11,True,14290000.0
+DV1020,Nilgiri Estates,Large developer,Pune,Pune,Neha Bansal,60,35000000.0,2025-04-28,True,10810000.0
+DV1021,Aakar Homes,Small developer,Pune,Pune,Vikram Desai,45,1500000.0,2024-10-07,False,732000.0
+DV1022,Utsav Builders,Mid-size developer,Chennai,South,Arjun Shetty,60,11500000.0,2025-04-14,False,4995000.0
+DV1023,Greenfield Infraprojects,EPC contractor,Thane,MMR,Rohit Menon,60,13000000.0,2024-12-02,False,6363000.0
+DV1024,Akshar Realty,Mid-size developer,Thane,MMR,Rohit Menon,60,5000000.0,2024-10-07,True,1687000.0
+DV1025,Mangal Infraprojects,EPC contractor,Hyderabad,South,Arjun Shetty,60,19000000.0,2024-10-07,False,6213000.0
+DV1026,Godavari Housing,Mid-size developer,Bengaluru,South,Arjun Shetty,45,4000000.0,2024-10-07,False,1878000.0
+DV1027,Tulsi Homes,Small developer,Chennai,South,Arjun Shetty,30,1000000.0,2024-10-07,False,708000.0
+DV1028,Sarthak Housing,Mid-size developer,Mumbai,MMR,Rohit Menon,45,5000000.0,2024-10-07,True,2234000.0
+DV1029,Aarambh Housing,Mid-size developer,Pune,Pune,Vikram Desai,60,9500000.0,2025-09-29,False,2822000.0
+DV1030,Sarthak Builders,Mid-size developer,Chennai,South,Sneha Iyer,45,4500000.0,2024-10-07,True,1867000.0
+DV1031,Evergreen Developers,Mid-size developer,Hyderabad,South,Sneha Iyer,60,5500000.0,2024-10-07,False,1565000.0
+DV1032,Swaraj Housing,Mid-size developer,Hyderabad,South,Arjun Shetty,45,13500000.0,2024-10-07,True,5094000.0
+DV1033,Crescent Infraprojects,EPC contractor,Pune,Pune,Vikram Desai,90,24000000.0,2024-10-07,True,5955000.0
+DV1034,Bluestone Builders,Mid-size developer,Bengaluru,South,Sneha Iyer,60,10000000.0,2024-10-07,False,2998000.0
+DV1035,Orchid Developers,Small developer,Navi Mumbai,MMR,Rohit Menon,30,1000000.0,2024-10-07,True,551000.0
+DV1036,Malabar Homes,Small developer,Bengaluru,South,Arjun Shetty,45,2500000.0,2025-03-03,False,1234000.0
+DV1037,Utsav Constructions (EPC),EPC contractor,Pune,Pune,Vikram Desai,90,64000000.0,2025-02-17,True,14358000.0
+DV1038,Indus Estates,Large developer,Hyderabad,South,Sneha Iyer,60,49500000.0,2024-11-18,True,17448000.0
+DV1039,Navkar Builders,Mid-size developer,Chennai,South,Sneha Iyer,45,13000000.0,2024-10-07,False,5141000.0
+DV1040,Malabar Builders,Small developer,Mumbai,MMR,Rohit Menon,30,2500000.0,2024-10-07,False,1404000.0
+DV1041,Keystone Constructions,Small developer,Mumbai,MMR,Priya Kulkarni,30,1000000.0,2025-10-20,False,902000.0
+DV1042,Trimurti Lifespaces,Large developer,Bengaluru,South,Sneha Iyer,45,51500000.0,2024-10-07,False,19326000.0
+DV1043,Coromandel Builders,Mid-size developer,Thane,MMR,Rohit Menon,45,8500000.0,2024-10-07,False,3637000.0
+DV1044,Orchid Constructions,Small developer,Pune,Pune,Vikram Desai,30,500000.0,2024-10-07,False,485000.0
+DV1045,Akshar Builders,Mid-size developer,Mumbai,MMR,Priya Kulkarni,45,11500000.0,2024-10-07,False,4648000.0
+DV1046,Cauvery Realty,Mid-size developer,Hyderabad,South,Arjun Shetty,60,6000000.0,2024-10-07,False,1995000.0
+DV1047,Keystone Infra Engineers,EPC contractor,Chennai,South,Arjun Shetty,60,31500000.0,2025-09-08,False,10387000.0
+DV1048,Shubharambh Builders,Mid-size developer,Thane,MMR,Priya Kulkarni,60,16000000.0,2025-01-27,False,5896000.0
+DV1049,Indus Builders,Mid-size developer,Bengaluru,South,Arjun Shetty,45,8000000.0,2025-12-01,False,4598000.0
+DV1050,Trimurti Homes,Small developer,Chennai,South,Sneha Iyer,30,1500000.0,2024-11-25,True,656000.0
+DV1051,Aakar Builders,Small developer,Navi Mumbai,MMR,Rohit Menon,45,1000000.0,2024-10-07,False,373000.0
+DV1052,Vastu Infraprojects,EPC contractor,Bengaluru,South,Sneha Iyer,90,63000000.0,2026-03-09,False,13032000.0
+DV1053,Indus Developers,Mid-size developer,Pune,Pune,Neha Bansal,45,4500000.0,2024-10-07,False,2163000.0
+DV1054,Indus Lifespaces,Large developer,Mumbai,MMR,Priya Kulkarni,60,59500000.0,2026-02-16,True,21565000.0
+DV1055,Greenfield Constructions,Small developer,Bengaluru,South,Arjun Shetty,45,1500000.0,2024-10-07,False,636000.0
+DV1056,Deccan Infraprojects,EPC contractor,Navi Mumbai,MMR,Rohit Menon,60,29500000.0,2024-10-07,True,9900000.0
+DV1057,Akshar Developers,Mid-size developer,Mumbai,MMR,Priya Kulkarni,60,17000000.0,2024-10-07,False,5603000.0
+DV1058,Cauvery Estates,Large developer,Mumbai,MMR,Rohit Menon,60,30000000.0,2024-10-07,True,13965000.0
+DV1059,Orchid Realty,Mid-size developer,Navi Mumbai,MMR,Priya Kulkarni,45,6000000.0,2024-10-07,False,2436000.0
+DV1060,Sahyadri Realty,Mid-size developer,Chennai,South,Sneha Iyer,60,11500000.0,2024-10-07,True,5289000.0
+DV1061,Sarthak Constructions,Small developer,Bengaluru,South,Sneha Iyer,30,500000.0,2024-10-07,False,368000.0
+DV1062,Saptagiri Realty,Mid-size developer,Mumbai,MMR,Rohit Menon,60,6000000.0,2024-10-07,False,2228000.0
+DV1063,Nirman Housing,Mid-size developer,Bengaluru,South,Arjun Shetty,45,7000000.0,2024-10-07,False,3114000.0
+DV1064,Prithvi Developers,Mid-size developer,Chennai,South,Arjun Shetty,60,4500000.0,2024-10-07,True,1516000.0
+DV1065,Crescent Infra Engineers,EPC contractor,Thane,MMR,Rohit Menon,90,24000000.0,2024-10-07,False,5673000.0
+DV1066,Mangal Builders,Mid-size developer,Thane,MMR,Rohit Menon,60,8500000.0,2024-10-07,False,2574000.0
+DV1067,Cauvery Constructions (EPC),EPC contractor,Pune,Pune,Vikram Desai,60,39000000.0,2024-10-07,False,12326000.0
+DV1068,Shubharambh Infra Engineers,EPC contractor,Bengaluru,South,Arjun Shetty,90,36000000.0,2025-12-15,False,8383000.0
+DV1069,Cauvery Developers,Small developer,Mumbai,MMR,Rohit Menon,45,1000000.0,2024-10-07,False,577000.0
+DV1070,Granite Housing,Mid-size developer,Bengaluru,South,Sneha Iyer,60,7500000.0,2024-10-07,False,3457000.0
+DV1071,Nirman Realty,Mid-size developer,Pune,Pune,Neha Bansal,60,5000000.0,2024-10-07,False,2197000.0
+DV1072,Mangal Developers,Small developer,Navi Mumbai,MMR,Priya Kulkarni,45,2000000.0,2024-10-07,False,1080000.0
+DV1073,Orchid Builders,Mid-size developer,Bengaluru,South,Arjun Shetty,45,11000000.0,2024-10-07,False,4562000.0
+DV1074,Silverline Constructions,Small developer,Hyderabad,South,Arjun Shetty,45,1000000.0,2024-10-07,False,690000.0
+DV1075,Akshar Constructions,Small developer,Pune,Pune,Vikram Desai,30,1500000.0,2024-10-07,False,851000.0
+DV1076,Godavari Constructions,Small developer,Navi Mumbai,MMR,Rohit Menon,30,500000.0,2025-01-20,False,412000.0
+DV1077,Silverline Developers,Mid-size developer,Chennai,South,Arjun Shetty,60,4000000.0,2024-10-07,True,1835000.0
+DV1078,Aarambh Infraprojects,EPC contractor,Mumbai,MMR,Rohit Menon,60,17500000.0,2024-10-07,True,5093000.0
+DV1079,Trimurti Constructions,Small developer,Mumbai,MMR,Priya Kulkarni,45,2500000.0,2024-10-07,True,968000.0
+DV1080,Narmada Realty,Mid-size developer,Navi Mumbai,MMR,Priya Kulkarni,45,6000000.0,2024-10-07,False,2624000.0
+DV1081,Riddhi Constructions (EPC),EPC contractor,Bengaluru,South,Sneha Iyer,90,51000000.0,2024-10-07,False,12848000.0
+DV1082,Akshar Homes,Small developer,Pune,Pune,Neha Bansal,30,1500000.0,2024-10-07,True,663000.0
+DV1083,Vastu Constructions (EPC),EPC contractor,Pune,Pune,Vikram Desai,60,18500000.0,2024-10-07,True,6710000.0
+DV1084,Shubharambh Realty,Large developer,Pune,Pune,Vikram Desai,60,25000000.0,2024-10-07,False,8151000.0
+DV1085,Evergreen Constructions,Small developer,Pune,Pune,Vikram Desai,45,1000000.0,2024-10-07,False,417000.0
+DV1086,Sahyadri Constructions,Small developer,Hyderabad,South,Arjun Shetty,30,500000.0,2024-10-07,False,320000.0
+DV1087,Granite Estates,Large developer,Chennai,South,Arjun Shetty,60,36000000.0,2025-02-10,True,15315000.0
+DV1088,Evergreen Homes,Small developer,Hyderabad,South,Arjun Shetty,30,2000000.0,2025-06-23,True,896000.0
+DV1089,Meridian Realty,Mid-size developer,Thane,MMR,Rohit Menon,60,13500000.0,2024-10-07,True,4434000.0
+DV1090,Greenfield Homes,Small developer,Bengaluru,South,Arjun Shetty,30,2500000.0,2024-10-07,False,1435000.0
+DV1091,Orchid Homes,Small developer,Pune,Pune,Neha Bansal,30,500000.0,2024-10-07,True,450000.0
+DV1092,Keystone Realty,Mid-size developer,Mumbai,MMR,Rohit Menon,60,17500000.0,2025-04-21,False,5920000.0
+DV1093,Utsav Developers,Small developer,Pune,Pune,Vikram Desai,30,1000000.0,2026-03-16,False,441000.0
+DV1094,Mangal Estates,Large developer,Pune,Pune,Vikram Desai,45,25000000.0,2024-10-07,False,11264000.0
+DV1095,Amrut Lifespaces,Large developer,Thane,MMR,Rohit Menon,60,29500000.0,2025-01-06,True,12124000.0
+DV1096,Akshar Housing,Mid-size developer,Bengaluru,South,Sneha Iyer,45,5000000.0,2026-03-23,False,2419000.0
+DV1097,Trimurti Realty,Large developer,Mumbai,MMR,Rohit Menon,60,46500000.0,2024-10-07,True,21545000.0
+DV1098,Akshar Infraprojects,EPC contractor,Hyderabad,South,Sneha Iyer,60,19000000.0,2025-10-27,True,7644000.0
+DV1099,Coromandel Estates,Large developer,Mumbai,MMR,Priya Kulkarni,60,48000000.0,2024-10-07,False,16305000.0
+DV1100,Konkan Homes,Small developer,Thane,MMR,Priya Kulkarni,30,1000000.0,2024-10-07,False,539000.0
+DV1101,Navkar Constructions,Small developer,Mumbai,MMR,Rohit Menon,45,1000000.0,2024-10-07,False,460000.0
+DV1102,Narmada Lifespaces,Large developer,Pune,Pune,Neha Bansal,60,30000000.0,2025-07-28,True,14411000.0
+DV1103,Godavari Realty,Large developer,Mumbai,MMR,Priya Kulkarni,60,24000000.0,2024-10-07,True,8320000.0
+DV1104,Nilgiri Realty,Large developer,Chennai,South,Sneha Iyer,45,40500000.0,2024-10-07,False,17678000.0
+DV1105,Tulsi Builders,Small developer,Thane,MMR,Rohit Menon,30,1500000.0,2025-07-14,False,674000.0
+DV1106,Tulsi Infra Engineers,EPC contractor,Thane,MMR,Rohit Menon,60,24500000.0,2026-01-05,False,12243000.0
+DV1107,Kaveri Infra Engineers,EPC contractor,Bengaluru,South,Arjun Shetty,90,38000000.0,2024-10-07,False,13262000.0
+DV1108,Kaveri Realty,Large developer,Thane,MMR,Priya Kulkarni,45,26000000.0,2025-12-08,True,13454000.0
+DV1109,Coromandel Homes,Small developer,Pune,Pune,Neha Bansal,30,1500000.0,2024-10-07,False,749000.0
+DV1110,Keystone Developers,Mid-size developer,Thane,MMR,Priya Kulkarni,60,15000000.0,2024-10-07,False,4799000.0
+DV1111,Vishwas Lifespaces,Large developer,Pune,Pune,Neha Bansal,60,32500000.0,2024-10-07,False,11774000.0
+DV1112,Coromandel Realty,Mid-size developer,Thane,MMR,Priya Kulkarni,60,11500000.0,2024-10-07,True,4575000.0
+DV1113,Terracotta Developers,Mid-size developer,Mumbai,MMR,Rohit Menon,45,12500000.0,2024-10-07,False,4891000.0
+DV1114,Nirman Lifespaces,Large developer,Bengaluru,South,Arjun Shetty,45,41500000.0,2024-10-07,False,15209000.0
+DV1115,Sarthak Developers,Small developer,Chennai,South,Arjun Shetty,30,500000.0,2024-10-07,False,430000.0
+DV1116,Malabar Lifespaces,Large developer,Thane,MMR,Rohit Menon,60,28000000.0,2025-11-24,False,13441000.0
+DV1117,Konkan Developers,Mid-size developer,Bengaluru,South,Arjun Shetty,45,8000000.0,2024-10-07,False,4565000.0
+DV1118,Nilgiri Builders,Mid-size developer,Hyderabad,South,Sneha Iyer,60,13500000.0,2025-11-24,True,5388000.0
+DV1119,Amrut Housing,Mid-size developer,Bengaluru,South,Arjun Shetty,45,5000000.0,2025-01-27,False,2209000.0
+DV1120,Greenfield Builders,Mid-size developer,Chennai,South,Sneha Iyer,60,6000000.0,2024-10-07,True,2428000.0
+DV1121,Kaveri Infraprojects,EPC contractor,Hyderabad,South,Sneha Iyer,90,30000000.0,2024-10-07,False,10043000.0
+DV1122,Swaraj Constructions,Small developer,Navi Mumbai,MMR,Priya Kulkarni,30,1500000.0,2024-10-07,False,1269000.0
+DV1123,Greenfield Housing,Mid-size developer,Pune,Pune,Neha Bansal,60,14000000.0,2024-10-07,False,4864000.0
+DV1124,Vastu Developers,Mid-size developer,Chennai,South,Sneha Iyer,60,7500000.0,2024-10-07,False,2811000.0
+DV1125,Granite Realty,Mid-size developer,Chennai,South,Arjun Shetty,60,7000000.0,2024-10-07,False,1960000.0
+DV1126,Mangal Housing,Mid-size developer,Bengaluru,South,Arjun Shetty,45,6000000.0,2025-12-29,False,3435000.0
+DV1127,Cauvery Housing,Mid-size developer,Hyderabad,South,Sneha Iyer,60,3500000.0,2024-10-07,False,1575000.0
+DV1128,Navkar Developers,Mid-size developer,Thane,MMR,Rohit Menon,45,12000000.0,2024-10-07,True,4248000.0
+DV1129,Nirman Constructions,Small developer,Mumbai,MMR,Priya Kulkarni,30,1000000.0,2024-10-07,True,479000.0
+DV1130,Meridian Constructions,Small developer,Pune,Pune,Vikram Desai,45,1000000.0,2025-07-14,False,399000.0
+DV1131,Silverline Realty,Large developer,Thane,MMR,Rohit Menon,60,61000000.0,2025-03-24,True,17547000.0
+DV1132,Vishwas Realty,Mid-size developer,Thane,MMR,Priya Kulkarni,60,11000000.0,2024-10-07,False,3673000.0
+DV1133,Vishwas Homes,Small developer,Thane,MMR,Rohit Menon,45,1500000.0,2024-10-07,False,593000.0
+DV1134,Shubharambh Lifespaces,Large developer,Bengaluru,South,Sneha Iyer,60,45500000.0,2026-01-05,False,14397000.0
+DV1135,Vishwas Housing,Mid-size developer,Chennai,South,Arjun Shetty,60,5500000.0,2026-01-26,False,2494000.0
+DV1136,Vishwas Infra Engineers,EPC contractor,Thane,MMR,Rohit Menon,60,21000000.0,2024-10-07,False,6790000.0
+DV1137,Konkan Infraprojects,EPC contractor,Mumbai,MMR,Priya Kulkarni,90,39000000.0,2024-10-07,True,12977000.0
+DV1138,Coromandel Constructions,Small developer,Navi Mumbai,MMR,Priya Kulkarni,45,3000000.0,2024-10-07,False,1442000.0
+DV1139,Tulsi Housing,Mid-size developer,Chennai,South,Sneha Iyer,45,4000000.0,2024-10-07,False,1884000.0
+DV1140,Narmada Housing,Mid-size developer,Mumbai,MMR,Rohit Menon,60,9000000.0,2024-10-07,False,3703000.0
+DV1141,Narmada Builders,Mid-size developer,Mumbai,MMR,Priya Kulkarni,45,7000000.0,2024-10-07,False,3548000.0
+DV1142,Navkar Housing,Mid-size developer,Bengaluru,South,Arjun Shetty,45,14500000.0,2024-10-07,False,5433000.0
+DV1143,Narmada Developers,Mid-size developer,Bengaluru,South,Arjun Shetty,45,6000000.0,2024-10-07,False,2731000.0
+DV1144,Amrut Builders,Small developer,Mumbai,MMR,Rohit Menon,30,500000.0,2024-10-07,False,336000.0
+DV1145,Swaraj Constructions (EPC),EPC contractor,Navi Mumbai,MMR,Rohit Menon,90,21000000.0,2026-02-16,False,5516000.0
+DV1146,Sahyadri Developers,Mid-size developer,Chennai,South,Arjun Shetty,45,10000000.0,2024-10-07,False,4079000.0
+DV1147,Prithvi Estates,Large developer,Bengaluru,South,Arjun Shetty,45,23000000.0,2024-10-07,True,13926000.0
+DV1148,Nirman Infra Engineers,EPC contractor,Bengaluru,South,Arjun Shetty,90,38500000.0,2024-10-07,True,11073000.0
+DV1149,Riddhi Constructions,Small developer,Mumbai,MMR,Priya Kulkarni,30,500000.0,2024-11-18,False,322000.0
+DV1150,Shubharambh Housing,Mid-size developer,Thane,MMR,Priya Kulkarni,60,11000000.0,2026-01-12,False,4786000.0
+DV1151,Malabar Realty,Mid-size developer,Navi Mumbai,MMR,Rohit Menon,60,12000000.0,2025-07-28,False,3621000.0
+DV1152,Riddhi Developers,Mid-size developer,Chennai,South,Arjun Shetty,60,5500000.0,2025-01-06,True,1909000.0
+DV1153,Saptagiri Housing,Mid-size developer,Pune,Pune,Vikram Desai,45,12000000.0,2024-11-04,False,4629000.0
+DV1154,Trimurti Estates,Large developer,Chennai,South,Arjun Shetty,45,33500000.0,2024-10-07,True,11881000.0
+DV1155,Nilgiri Developers,Small developer,Navi Mumbai,MMR,Rohit Menon,30,500000.0,2024-10-07,False,534000.0
+DV1156,Prithvi Housing,Mid-size developer,Mumbai,MMR,Priya Kulkarni,45,6000000.0,2024-10-07,False,2099000.0
+DV1157,Konkan Housing,Mid-size developer,Mumbai,MMR,Rohit Menon,60,5500000.0,2024-10-07,True,1825000.0
+DV1158,Deccan Builders,Mid-size developer,Mumbai,MMR,Rohit Menon,45,5000000.0,2025-09-08,False,2518000.0
+DV1159,Tulsi Estates,Large developer,Mumbai,MMR,Rohit Menon,45,48500000.0,2024-10-07,True,19522000.0
+DV1160,Terracotta Infraprojects,EPC contractor,Mumbai,MMR,Rohit Menon,90,54500000.0,2024-10-07,True,14958000.0

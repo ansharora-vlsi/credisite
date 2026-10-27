@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+data/snapshots.pkl
+.DS_Store
+data/challans.csv

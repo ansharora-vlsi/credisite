@@ -1,0 +1,1041 @@
+<title>CrediSite Risk Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: credit desk. Left rail of views on desktop, scrolling tab strip on phones.
+   Summary first, then the queue, then one account at a time. */
+:root {
+  --bg: #efeeea;          /* concrete page plane */
+  --surface: #fcfcfb;
+  --surface-2: #f5f4f0;
+  --line: #e1e0d9;
+  --line-strong: #c3c2b7;
+  --ink: #141412;
+  --ink-2: #52514e;
+  --muted: #6c6a64;
+  --accent: #23457a;      /* site-plan ink blue */
+  --accent-ink: #ffffff;
+  --accent-soft: #e3e9f3;
+  --s1: #2a78d6;          /* series: billed */
+  --s2: #eb6834;          /* series: collected */
+  --a0: #86b6ef; --a1: #5598e7; --a2: #2a78d6; --a3: #1c5cab; --a4: #0d366b;   /* aging: not due -> 90+ */
+  --good: #0ca30c; --warn: #fab219; --serious: #ec835a; --crit: #d03b3b;
+  --good-soft: #e4f3e2; --warn-soft: #fcf0d2; --serious-soft: #fbe6dc; --crit-soft: #f8e0df;
+  --div-pos: #d03b3b; --div-neg: #2a78d6;
+  --grid: #e7e6e0;
+  --shadow: 0 1px 2px rgba(20,20,18,.06), 0 4px 16px rgba(20,20,18,.05);
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f0f0e; --surface: #1a1a19; --surface-2: #222220; --line: #2c2c2a; --line-strong: #3d3d3a;
+    --ink: #f0efec; --ink-2: #c3c2b7; --muted: #9c9a91; --accent: #9db8e8; --accent-ink: #0f0f0e; --accent-soft: #1f2a3d;
+    --s1: #3987e5; --s2: #d95926;
+    --a0: #9ec5f4; --a1: #6da7ec; --a2: #3987e5; --a3: #256abf; --a4: #184f95;
+    --good-soft: #17301a; --warn-soft: #3a2f12; --serious-soft: #3b2418; --crit-soft: #3c1a1a;
+    --div-pos: #e66767; --div-neg: #3987e5; --grid: #262624;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f0f0e; --surface: #1a1a19; --surface-2: #222220; --line: #2c2c2a; --line-strong: #3d3d3a;
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #9c9a91; --accent: #9db8e8; --accent-ink: #0f0f0e; --accent-soft: #1f2a3d;
+  --s1: #3987e5; --s2: #d95926;
+  --a0: #9ec5f4; --a1: #6da7ec; --a2: #3987e5; --a3: #256abf; --a4: #184f95;
+  --good-soft: #17301a; --warn-soft: #3a2f12; --serious-soft: #3b2418; --crit-soft: #3c1a1a;
+  --div-pos: #e66767; --div-neg: #3987e5; --grid: #262624;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 14px; line-height: 1.45; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.mono { font-family: var(--f-mono); font-size: 12px; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 88%; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: 26px; font-weight: 750; }
+h2 { font-size: 18px; font-weight: 700; }
+h3 { font-size: 14px; font-weight: 700; font-stretch: 95%; }
+.eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+
+/* ---------- shell ---------- */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 10px;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand b { font-family: var(--f-display); font-weight: 800; font-stretch: 75%; font-size: 22px; letter-spacing: .01em; text-transform: uppercase; }
+.brand span { color: var(--muted); font-size: 12px; }
+.topbar .spacer { flex: 1; }
+.asof { font-size: 12px; color: var(--ink-2); }
+.asof b { font-weight: 600; }
+.who { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.who .role { background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+.btn { border: 1px solid var(--line-strong); background: var(--surface); padding: 6px 12px; border-radius: var(--r); cursor: pointer; font-weight: 500; font-size: 13px; }
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.small { padding: 3px 8px; font-size: 12px; }
+.btn[disabled] { opacity: .5; cursor: default; }
+.notice { background: var(--warn-soft); color: var(--ink); font-size: 12px; padding: 6px max(16px, env(safe-area-inset-right, 0px)) 6px max(16px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); }
+
+.shell { display: grid; grid-template-columns: 210px minmax(0, 1fr); min-height: calc(100vh - 60px); }
+.rail { border-right: 1px solid var(--line); background: var(--surface); padding: 16px 10px; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 60px; align-self: start; height: calc(100vh - 60px); }
+.rail a { display: flex; flex-direction: column; text-decoration: none; color: var(--ink-2); padding: 8px 12px; border-radius: var(--r); }
+.rail a b { font-weight: 600; color: var(--ink); font-size: 13.5px; }
+.rail a small { font-size: 11.5px; color: var(--muted); }
+.rail a:hover { background: var(--surface-2); }
+.rail a[aria-current="page"] { background: var(--accent-soft); }
+.rail a[aria-current="page"] b { color: var(--accent); }
+.rail .foot { margin-top: auto; font-size: 11px; color: var(--muted); padding: 8px 12px; }
+main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px; min-width: 0; }
+.page { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.page-head p { margin: 4px 0 0; color: var(--ink-2); max-width: 70ch; }
+
+@media (max-width: 980px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; height: auto; flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 6px max(16px, env(safe-area-inset-right, 0px)) 6px max(16px, env(safe-area-inset-left, 0px)); gap: 4px; }
+  .rail a { flex: 0 0 auto; padding: 6px 10px; }
+  .rail a small, .rail .foot { display: none; }
+}
+
+/* ---------- panels & grids ---------- */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.panel-head p { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+.grid { display: grid; gap: 16px; }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g-wide { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+@media (max-width: 860px) { .g2, .g3, .g-wide { grid-template-columns: minmax(0, 1fr); } }
+
+.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.kpi { padding: 14px 16px; border-left: 1px solid var(--line); min-width: 0; }
+.kpi:first-child { border-left: 0; }
+.kpi .v { font-family: var(--f-display); font-size: 24px; font-weight: 700; font-stretch: 85%; margin-top: 4px; white-space: nowrap; }
+.kpi .d { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.kpi .d.up-bad { color: var(--crit); }
+.kpi .d.down-good { color: #0a7d0a; }
+@media (max-width: 1100px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kpi:nth-child(4) { border-left: 0; } .kpi:nth-child(n+4) { border-top: 1px solid var(--line); } }
+@media (max-width: 560px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi { border-left: 0; border-top: 1px solid var(--line); } .kpi:nth-child(-n+2) { border-top: 0; } .kpi:nth-child(even) { border-left: 1px solid var(--line); } }
+:root[data-theme="dark"] .kpi .d.down-good { color: var(--good); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .kpi .d.down-good { color: var(--good); } }
+
+/* ---------- tier pill ---------- */
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px 2px 7px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill.Low { background: var(--good-soft); } .pill.Low::before { background: var(--good); }
+.pill.Medium { background: var(--warn-soft); } .pill.Medium::before { background: var(--warn); }
+.pill.High { background: var(--serious-soft); } .pill.High::before { background: var(--serious); }
+.pill.Delinquent { background: var(--crit-soft); } .pill.Delinquent::before { background: var(--crit); }
+.chip { display: inline-block; padding: 2px 8px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); font-size: 12px; white-space: nowrap; }
+
+/* ---------- tables ---------- */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; background: var(--surface-2); position: sticky; top: 0; white-space: nowrap; }
+th[data-sort] { cursor: pointer; }
+th[data-sort]:hover { color: var(--ink); }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr.click { cursor: pointer; }
+tbody tr.click:hover td { background: var(--surface-2); }
+td .sub { display: block; color: var(--muted); font-size: 12px; }
+.reason-cell { max-width: 34ch; color: var(--ink-2); font-size: 12.5px; }
+
+/* ---------- risk matrix ---------- */
+.matrix { display: grid; grid-template-columns: 64px repeat(3, minmax(0, 1fr)); gap: 4px; }
+.matrix .ax { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.cell { border-radius: 6px; padding: 10px; min-height: 86px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; border: 1px solid transparent; text-align: left; background: var(--surface-2); }
+.cell:hover { border-color: var(--line-strong); }
+.cell.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.cell .n { font-family: var(--f-display); font-size: 22px; font-weight: 700; font-stretch: 85%; line-height: 1; }
+.cell .amt { font-size: 12px; color: var(--ink-2); }
+.cell .act { font-size: 11.5px; margin-top: auto; color: var(--ink); font-weight: 600; }
+.cell.sev0 { background: var(--good-soft); } .cell.sev1 { background: color-mix(in srgb, var(--good-soft) 50%, var(--warn-soft)); }
+.cell.sev2 { background: var(--warn-soft); } .cell.sev3 { background: var(--serious-soft); } .cell.sev4 { background: var(--crit-soft); }
+.delq { margin-top: 8px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; background: var(--crit-soft); cursor: pointer; border: 1px solid transparent; width: 100%; text-align: left; }
+.delq.on { border-color: var(--accent); }
+.delq b.num { white-space: nowrap; }
+
+/* ---------- charts ---------- */
+.chart { width: 100%; min-height: 60px; position: relative; }
+.chart svg { display: block; overflow: visible; }
+.chart text { fill: var(--muted); font-size: 11px; font-family: var(--f-body); }
+.chart .gl { stroke: var(--grid); stroke-width: 1; }
+.chart .bl { stroke: var(--line-strong); stroke-width: 1; }
+.chart .hit { fill: transparent; }
+.chart .xh { stroke: var(--ink-2); stroke-width: 1; opacity: 0; pointer-events: none; }
+.chart .band:hover .xh { opacity: .5; }
+.chart .band:hover ~ .x { opacity: 1; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); margin-bottom: 8px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.legend i.line { height: 3px; border-radius: 2px; vertical-align: 2px; }
+#tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--surface); font-size: 12px; padding: 7px 10px; border-radius: 6px; max-width: 280px; opacity: 0; transition: opacity .08s; line-height: 1.4; box-shadow: var(--shadow); }
+#tip b { font-weight: 600; }
+#tip .row { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; }
+
+/* ---------- account 360 ---------- */
+.acct-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: start; }
+.acct-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.scorebox { text-align: right; }
+.scorebox .s { font-family: var(--f-display); font-size: 44px; font-weight: 800; font-stretch: 80%; line-height: 1; }
+.gauge { position: relative; height: 10px; border-radius: 999px; overflow: hidden; display: flex; margin-top: 8px; width: 220px; }
+.gauge span { height: 100%; }
+.gauge-wrap { position: relative; width: 220px; margin-left: auto; }
+.gauge-marker { position: absolute; top: 4px; width: 3px; height: 18px; background: var(--ink); border-radius: 2px; transform: translateX(-1px); }
+.gauge-scale { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-top: 6px; }
+@media (max-width: 640px) { .acct-head { grid-template-columns: minmax(0, 1fr); } .scorebox { text-align: left; } .gauge-wrap { margin-left: 0; } }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.facts div { padding: 12px 14px; border-left: 1px solid var(--line); min-width: 0; }
+.facts div:first-child { border-left: 0; }
+.facts .v { font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.facts .d { font-size: 12px; color: var(--muted); }
+@media (max-width: 760px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .facts div:nth-child(3) { border-left: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+.reasons { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.reasons li { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13px; }
+.bar-mini { height: 8px; border-radius: 4px; background: var(--div-pos); }
+.bar-mini.neg { background: var(--div-neg); }
+.recbox { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; padding: 12px 14px; border-radius: 8px; background: var(--accent-soft); }
+.recbox .big { font-family: var(--f-display); font-weight: 700; font-size: 20px; font-stretch: 85%; }
+.ai-out { white-space: pre-wrap; font-size: 13.5px; line-height: 1.55; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; min-height: 48px; }
+.ai-tag { font-size: 11px; color: var(--muted); }
+textarea, input[type="text"], input[type="password"], input[type="search"], input[type="number"], select { background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r); padding: 7px 10px; }
+textarea { width: 100%; min-height: 70px; resize: vertical; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
+.row-gap { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.toolbar input[type="search"] { min-width: 0; flex: 1 1 220px; }
+.empty { padding: 28px; text-align: center; color: var(--muted); }
+.log { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.log li { border-left: 3px solid var(--accent); padding: 4px 0 4px 10px; }
+
+/* ---------- simulator ---------- */
+.sliders { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .sliders { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .sliders { grid-template-columns: minmax(0, 1fr); } }
+.sliders label { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: var(--ink-2); }
+.sliders output { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; font-size: 15px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+/* ---------- login ---------- */
+.login { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+.login-side { background: var(--accent); color: var(--accent-ink); padding-block: 48px; padding-left: max(32px, env(safe-area-inset-left, 0px)); padding-right: 32px; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; }
+.login-side h1 { font-size: clamp(34px, 5vw, 56px); font-stretch: 72%; font-weight: 800; text-transform: uppercase; line-height: .95; }
+.login-side p { max-width: 46ch; font-size: 15px; opacity: .92; }
+.login-side .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; border-top: 1px solid color-mix(in srgb, var(--accent-ink) 30%, transparent); padding-top: 16px; }
+.login-side .stats b { display: block; font-family: var(--f-display); font-size: 24px; font-stretch: 80%; }
+.login-side .stats span { font-size: 12px; opacity: .85; }
+.login-form { padding-block: 48px; padding-left: 32px; padding-right: max(32px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; justify-content: center; gap: 16px; max-width: 480px; width: 100%; margin: 0 auto; }
+.login-form form { display: flex; flex-direction: column; gap: 12px; }
+.demo-users { display: flex; flex-direction: column; gap: 8px; }
+.demo-user { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; text-align: left; border: 1px solid var(--line); background: var(--surface); padding: 10px 12px; border-radius: 8px; cursor: pointer; }
+.demo-user:hover { border-color: var(--accent); }
+.demo-user b { font-size: 13.5px; }
+.demo-user small { grid-column: 1; color: var(--muted); font-size: 12px; }
+.demo-user .mono { grid-row: 1 / span 2; grid-column: 2; color: var(--ink-2); }
+.err { color: var(--crit); font-size: 12.5px; min-height: 18px; }
+@media (max-width: 820px) { .login { grid-template-columns: minmax(0, 1fr); } .login-side { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); } .login-form { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); } }
+.toast { position: fixed; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: calc(16px + env(safe-area-inset-right, 0px)); background: var(--ink); color: var(--surface); padding: 10px 14px; border-radius: 8px; font-size: 13px; z-index: 60; box-shadow: var(--shadow); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div id="app"></div>
+<div id="tip" role="tooltip"></div>
+<div id="toast" class="toast" hidden></div>
+<script id="seed" type="application/json">__SEED__</script>
+<script>
+(() => {
+"use strict";
+const D = JSON.parse(document.getElementById("seed").textContent);
+const DEVS = D.developers;
+const BY_ID = Object.fromEntries(DEVS.map(d => [d.id, d]));
+const CFG = D.config;
+const P = D.model.params;
+
+// ---------- formatting (Indian units) ----------
+const inr = (x, dp) => {
+  if (x == null || isNaN(x)) return "–";
+  const a = Math.abs(x), s = x < 0 ? "-" : "";
+  if (a >= 1e7) return s + "₹" + (a / 1e7).toFixed(dp ?? (a >= 1e9 ? 0 : 2)) + " Cr";
+  if (a >= 1e5) return s + "₹" + (a / 1e5).toFixed(dp ?? 1) + " L";
+  return s + "₹" + Math.round(a).toLocaleString("en-IN");
+};
+const pct = (x, dp = 0) => (x == null || isNaN(x)) ? "–" : (x * 100).toFixed(dp) + "%";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmtDate = s => { const d = new Date(s + "T00:00:00"); return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }); };
+const fmtMon = s => { const d = new Date(s.length === 7 ? s + "-01T00:00:00" : s + "T00:00:00"); return d.toLocaleDateString("en-IN", { month: "short", year: "2-digit" }); };
+const store = {
+  get(k, def) { try { const v = sessionStorage.getItem(k) ?? localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch { return def; } },
+  set(k, v, session) { try { (session ? sessionStorage : localStorage).setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { try { sessionStorage.removeItem(k); localStorage.removeItem(k); } catch {} },
+};
+
+// ---------- demo users (client-side demo login; not real authentication) ----------
+const USERS = {
+  "analyst@credisite.demo": { pass: "demo1234", name: "Kavya Rao", role: "Credit analyst", views: ["overview", "queue", "account", "collections", "simulator", "model", "about"], canDecide: true },
+  "rm.priya@credisite.demo": { pass: "demo1234", name: "Priya Kulkarni", role: "Sales RM", rm: "Priya Kulkarni", views: ["queue", "account", "collections", "about"], canDecide: false },
+  "cfo@credisite.demo": { pass: "demo1234", name: "Anand Mehta", role: "CFO", views: ["overview", "queue", "account", "simulator", "model", "about"], canDecide: false },
+};
+const VIEWS = {
+  overview: ["Portfolio", "Receivables, aging, risk mix"],
+  queue: ["Risk queue", "Every account, scored"],
+  account: ["Account 360", "One developer in depth"],
+  collections: ["Collections", "Who to chase today"],
+  simulator: ["Policy simulator", "What-if on credit rules"],
+  model: ["Model & backtest", "How far to trust it"],
+  about: ["About the data", "What's real, what isn't"],
+};
+
+const S = {
+  user: store.get("credisite.user", null),
+  view: "overview", devId: null,
+  f: { tier: null, exp: null, q: "", seg: "", city: "", aiIds: null, aiLabel: "" },
+  sort: { key: "priorityRank", dir: 1 },
+  decisions: store.get("credisite.decisions", {}),
+  sim: { high: CFG.pd_tiers.Medium, med: CFG.pd_tiers.Low, lgd: CFG.lgd, shock: 0, seg: "All", margin: 0.09 },
+};
+
+// ---------- AI (Claude, when this page runs inside a Claude viewer) ----------
+let SAMPLE = null, DOWNLOADS = null;
+if (window.claude && typeof window.claude.use === "function") {
+  window.claude.use("sample").then(f => { SAMPLE = f; if (f) render(); }).catch(() => {});
+  window.claude.use("downloads").then(f => { DOWNLOADS = f; if (f) render(); }).catch(() => {});
+}
+const aiErr = code => ({
+  not_granted: "AI analyst is turned off for this view. Showing the rule-based note instead.",
+  sampling_disabled: "AI isn't available for this account. Showing the rule-based note instead.",
+  rate_limited: "Too many AI requests just now. Try again in a minute.",
+  refused: "The AI declined this request. The rule-based note is below.",
+}[code] || "The AI request didn't complete. Try again.");
+
+// ---------- model in the browser (same scorecard as Python) ----------
+const TF = {
+  utilisation: d => clamp(d.utilisation, 0, 3), dso: d => clamp(d.dso / 100, 0, 4), dso_trend: d => d.dso_trend / 100,
+  days_late_90d: d => clamp(d.days_late / 30, -1, 6), collection_efficiency_90d: d => clamp(d.coll_eff, 0, 1.5),
+  partial_share_90d: d => clamp(d.partial_share, 0, 1), bounces_180d: d => clamp(d.bounces, 0, 4),
+  dispute_rate_90d: d => clamp(d.dispute_rate, 0, 0.5), billing_change: d => clamp(d.billing_change, -1, 1.5),
+};
+function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+function pdOf(d) {
+  let z = P.intercept;
+  for (const f in P.coef) z += P.coef[f] * ((TF[f](d) - P.mu[f]) / P.sd[f]);
+  return 1 / (1 + Math.exp(-z));
+}
+const scoreOf = p => Math.round(Math.max(300, Math.min(900, 600 + 40 / Math.LN2 * Math.log(((1 - p) / p) / 50))));
+const LOW_LINE = scoreOf(CFG.pd_tiers.Low), HIGH_LINE = scoreOf(CFG.pd_tiers.Medium);
+const tierOf = (p, hi = CFG.pd_tiers.Medium, lo = CFG.pd_tiers.Low) => p < lo ? "Low" : p < hi ? "Medium" : "High";
+const expTier = x => x < CFG.exposure_tiers.Low ? "Low" : x < CFG.exposure_tiers.Medium ? "Medium" : "High";
+const ACTION_SEV = { "Continue": 0, "Continue + monitor": 1, "Reduce limit / shorten terms": 2, "Reduce limit + RM visit": 2, "Advance payment only": 3, "Pause new supply": 4, "Pause supply + escalate": 4, "Collections / legal track": 4 };
+const ACTION_GMV_CUT = { "Continue": 0, "Continue + monitor": 0, "Reduce limit / shorten terms": 0.15, "Reduce limit + RM visit": 0.25, "Advance payment only": 0.5, "Pause new supply": 1, "Pause supply + escalate": 1 };
+
+// ranking used by the default sort: worst first
+const TIER_RANK = { Delinquent: 0, High: 1, Medium: 2, Low: 3 };
+DEVS.forEach(d => { d.od60 = (d.od[2] || 0) + (d.od[3] || 0); d.od31 = (d.od[1] || 0) + d.od60; });
+const ranked = [...DEVS].sort((a, b) => TIER_RANK[a.tier] - TIER_RANK[b.tier] || b.pd - a.pd);
+ranked.forEach((d, i) => d.priorityRank = i);
+
+// ---------- tooltip ----------
+const tip = document.getElementById("tip");
+document.addEventListener("pointermove", e => {
+  const t = e.target.closest ? e.target.closest("[data-tip]") : null;
+  if (!t) { tip.style.opacity = 0; return; }
+  tip.innerHTML = t.getAttribute("data-tip");
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + 14, y = e.clientY + 14;
+  if (x + w > innerWidth - 8) x = e.clientX - w - 14;
+  if (y + h > innerHeight - 8) y = e.clientY - h - 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px"; tip.style.opacity = 1;
+});
+document.addEventListener("pointerleave", () => tip.style.opacity = 0);
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 2600);
+}
+
+// ---------- chart helpers (SVG drawn at the container's real width) ----------
+function niceTicks(max, n = 4) {
+  if (max <= 0) return [0, 1];
+  const raw = max / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
+  const out = []; for (let v = 0; v <= max + step * 0.001; v += step) out.push(v);
+  if (out[out.length - 1] < max) out.push(out[out.length - 1] + step);
+  return out;
+}
+function topRounded(x, y, w, h, r) {
+  if (h <= 0) return "";
+  r = Math.min(r, w / 2, h);
+  return `M${x},${y + h}V${y + r}Q${x},${y} ${x + r},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + h}Z`;
+}
+function xLabelIdx(n, maxLabels) {
+  const step = Math.max(1, Math.ceil(n / maxLabels)); const idx = [];
+  for (let i = n - 1; i >= 0; i -= step) idx.unshift(i);
+  return idx;
+}
+// stacked or grouped columns
+function columns(el, { labels, series, stacked = true, fmt = inr, height = 220, tipTitle = l => l }) {
+  const W = el.clientWidth || 600, H = height, m = { l: 56, r: 8, t: 10, b: 26 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b, n = labels.length;
+  const totals = labels.map((_, i) => stacked ? series.reduce((s, se) => s + (se.values[i] || 0), 0) : Math.max(...series.map(se => se.values[i] || 0)));
+  const ticks = niceTicks(Math.max(...totals) * 1.02), ymax = ticks[ticks.length - 1];
+  const y = v => m.t + ih - (v / ymax) * ih, bw = iw / n;
+  let g = "";
+  ticks.forEach(t => { g += `<line class="gl" x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}"/><text x="${m.l - 8}" y="${y(t) + 4}" text-anchor="end">${fmt(t, t >= 1e7 ? 0 : undefined)}</text>`; });
+  const inner = Math.max(2, bw * (stacked ? 0.68 : 0.8));
+  labels.forEach((lab, i) => {
+    const x0 = m.l + i * bw + (bw - inner) / 2;
+    let acc = 0, rows = "";
+    series.forEach((se, k) => {
+      const v = se.values[i] || 0;
+      rows = `<div class="row"><span>${esc(se.name)}</span><b>${fmt(v)}</b></div>` + rows;
+      if (stacked) {
+        const y1 = y(acc + v), y0 = y(acc), h = Math.max(0, y0 - y1 - (acc > 0 ? 2 : 0));
+        const isTop = series.slice(k + 1).every(s2 => !(s2.values[i] > 0));
+        g += isTop ? `<path d="${topRounded(x0, y1, inner, h, 3)}" fill="${se.color}"/>` : `<rect x="${x0}" y="${y1}" width="${inner}" height="${h}" fill="${se.color}"/>`;
+        acc += v;
+      } else {
+        const gw = (inner - 2 * (series.length - 1)) / series.length, xx = x0 + k * (gw + 2);
+        g += `<path d="${topRounded(xx, y(v), gw, y(0) - y(v), 3)}" fill="${se.color}"/>`;
+      }
+    });
+    const tipHtml = `<b>${esc(tipTitle(lab))}</b>${rows}${stacked ? `<div class="row"><span>Total</span><b>${fmt(totals[i])}</b></div>` : ""}`;
+    g += `<rect class="hit" x="${m.l + i * bw}" y="${m.t}" width="${bw}" height="${ih}" data-tip="${esc(tipHtml)}"/>`;
+  });
+  g += `<line class="bl" x1="${m.l}" x2="${W - m.r}" y1="${y(0)}" y2="${y(0)}"/>`;
+  xLabelIdx(n, Math.floor(iw / 56)).forEach(i => { g += `<text x="${m.l + i * bw + bw / 2}" y="${H - 8}" text-anchor="middle">${esc(fmtMon(labels[i]))}</text>`; });
+  el.innerHTML = `<svg width="${W}" height="${H}" role="img">${g}</svg>`;
+}
+// line chart with crosshair bands
+function lines(el, { labels, series, fmt = v => v, height = 200, yMin = null, yMax = null, refs = [], tipTitle = l => fmtMon(l) }) {
+  const W = el.clientWidth || 600, H = height, m = { l: 48, r: 14, t: 10, b: 26 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b, n = labels.length;
+  const all = series.flatMap(s => s.values).filter(v => v != null);
+  let lo = yMin ?? Math.min(0, ...all), hi = yMax ?? Math.max(...all) * 1.08;
+  const ticks = yMax != null && yMin != null ? [0, 1, 2, 3, 4].map(i => lo + (hi - lo) * i / 4) : niceTicks(hi - lo).map(t => t + lo);
+  hi = ticks[ticks.length - 1];
+  const x = i => m.l + (n === 1 ? iw / 2 : (i / (n - 1)) * iw), y = v => m.t + ih - ((v - lo) / (hi - lo)) * ih;
+  let g = "";
+  ticks.forEach(t => { g += `<line class="gl" x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}"/><text x="${m.l - 8}" y="${y(t) + 4}" text-anchor="end">${fmt(t)}</text>`; });
+  refs.forEach(r => { g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(r.v)}" y2="${y(r.v)}" stroke="${r.color}" stroke-dasharray="4 4" stroke-width="1"/><text x="${m.l + 6}" y="${y(r.v) + (r.below ? 13 : -5)}">${esc(r.label)}</text>`; });
+  series.forEach(s => {
+    const pts = s.values.map((v, i) => v == null ? null : [x(i), y(v)]).filter(Boolean);
+    if (s.area) g += `<path d="M${pts[0][0]},${y(lo)}L${pts.map(p => p.join(",")).join("L")}L${pts[pts.length - 1][0]},${y(lo)}Z" fill="${s.color}" opacity=".12"/>`;
+    g += `<path d="M${pts.map(p => p.join(",")).join("L")}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" ${s.dash ? 'stroke-dasharray="5 4"' : ""}/>`;
+    const last = pts[pts.length - 1];
+    g += `<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${s.color}" stroke="var(--surface)" stroke-width="2"/>`;
+  });
+  const bw = n > 1 ? iw / (n - 1) : iw;
+  labels.forEach((lab, i) => {
+    const rows = series.map(s => `<div class="row"><span>${esc(s.name)}</span><b>${s.values[i] == null ? "–" : fmt(s.values[i])}</b></div>`).join("");
+    g += `<g class="band"><rect class="hit" x="${x(i) - bw / 2}" y="${m.t}" width="${bw}" height="${ih}" data-tip="${esc(`<b>${esc(tipTitle(lab))}</b>${rows}`)}"/><line class="xh" x1="${x(i)}" x2="${x(i)}" y1="${m.t}" y2="${m.t + ih}"/></g>`;
+  });
+  g += `<line class="bl" x1="${m.l}" x2="${W - m.r}" y1="${y(lo)}" y2="${y(lo)}"/>`;
+  xLabelIdx(n, Math.floor(iw / 56)).forEach(i => { g += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(tipTitle(labels[i]))}</text>`; });
+  el.innerHTML = `<svg width="${W}" height="${H}" role="img">${g}</svg>`;
+}
+// horizontal diverging bars (feature weights)
+function hbars(el, items, { fmt = v => v.toFixed(2) } = {}) {
+  const W = el.clientWidth || 500, rowH = 26, labW = Math.min(230, W * 0.48), m = { t: 6, b: 22 };
+  const H = m.t + m.b + items.length * rowH, max = Math.max(...items.map(i => Math.abs(i.value))) * 1.1;
+  const x0 = labW + (W - labW - 10) / 2, sc = (W - labW - 10) / 2 / max;
+  let g = `<line class="bl" x1="${x0}" x2="${x0}" y1="${m.t}" y2="${H - m.b}"/>`;
+  items.forEach((it, k) => {
+    const yy = m.t + k * rowH + 5, w = Math.abs(it.value) * sc, pos = it.value > 0;
+    g += `<text x="${labW - 8}" y="${yy + 12}" text-anchor="end" style="fill:var(--ink-2)">${esc(it.label)}</text>`;
+    g += `<rect x="${pos ? x0 + 1 : x0 - w - 1}" y="${yy}" width="${Math.max(1, w)}" height="16" rx="3" fill="${pos ? "var(--div-pos)" : "var(--div-neg)"}" data-tip="${esc(`<b>${esc(it.label)}</b><div class="row"><span>Weight</span><b>${fmt(it.value)}</b></div><div>${pos ? "Higher value raises risk" : "Higher value lowers risk"}</div>`)}"/>`;
+  });
+  g += `<text x="${x0 - 6}" y="${H - 6}" text-anchor="end">← lowers risk</text><text x="${x0 + 6}" y="${H - 6}">raises risk →</text>`;
+  el.innerHTML = `<svg width="${W}" height="${H}" role="img">${g}</svg>`;
+}
+// scatter-ish calibration / trade-off chart
+function xy(el, { pts, xFmt, yFmt, xMax, yMax, diag = false, height = 240, xLabel = "", yLabel = "", path = false, highlight = null }) {
+  const W = el.clientWidth || 500, H = height, m = { l: 56, r: 16, t: 12, b: 40 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const xt = niceTicks(xMax || Math.max(...pts.map(p => p.x)) || 1), yt = niceTicks(yMax || Math.max(...pts.map(p => p.y)) || 1);
+  const X = v => m.l + v / xt[xt.length - 1] * iw, Y = v => m.t + ih - v / yt[yt.length - 1] * ih;
+  let g = "";
+  yt.forEach(t => { g += `<line class="gl" x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}"/><text x="${m.l - 8}" y="${Y(t) + 4}" text-anchor="end">${yFmt(t)}</text>`; });
+  xt.forEach(t => { g += `<text x="${X(t)}" y="${H - 24}" text-anchor="middle">${xFmt(t)}</text>`; });
+  g += `<line class="bl" x1="${m.l}" x2="${W - m.r}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  if (diag) { const e = Math.min(xt[xt.length - 1], yt[yt.length - 1]); g += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(e)}" y2="${Y(e)}" stroke="var(--line-strong)" stroke-dasharray="4 4"/><text x="${X(e) - 4}" y="${Y(e) + 14}" text-anchor="end">perfect calibration</text>`; }
+  if (path) g += `<path d="M${pts.map(p => X(p.x) + "," + Y(p.y)).join("L")}" fill="none" stroke="var(--s1)" stroke-width="2"/>`;
+  const placed = [];
+  const order = [...pts].sort((a, b) => (a.key === highlight) - (b.key === highlight));
+  order.forEach(p => {
+    const hl = highlight != null && p.key === highlight;
+    g += `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${hl ? 7 : (p.r || 5)}" fill="${hl ? "var(--s2)" : "var(--s1)"}" stroke="var(--surface)" stroke-width="2" data-tip="${esc(p.tip)}"/>`;
+  });
+  [...pts].sort((a, b) => (b.key === highlight) - (a.key === highlight)).forEach(p => {
+    if (!p.label) return;
+    const lx = X(p.x) + 9, ly = Y(p.y) - 9;
+    if (placed.some(([a, b]) => Math.abs(a - lx) < 34 && Math.abs(b - ly) < 14)) return;
+    placed.push([lx, ly]);
+    g += `<text x="${lx}" y="${ly}" style="fill:var(--ink-2);font-weight:${p.key === highlight ? 700 : 400}">${esc(p.label)}</text>`;
+  });
+  g += `<text x="${m.l + iw / 2}" y="${H - 4}" text-anchor="middle">${esc(xLabel)}</text>`;
+  g += `<text transform="translate(12 ${m.t + ih / 2}) rotate(-90)" text-anchor="middle">${esc(yLabel)}</text>`;
+  el.innerHTML = `<svg width="${W}" height="${H}" role="img">${g}</svg>`;
+}
+
+// ---------- shared bits ----------
+const pill = t => `<span class="pill ${t}">${t === "Delinquent" ? "Delinquent (90+)" : t}</span>`;
+const visibleDevs = () => S.user && USERS[S.user].rm ? DEVS.filter(d => d.rm === USERS[S.user].rm) : DEVS;
+const agingSeries = (vals) => [
+  { name: "Not yet due", color: "var(--a0)", values: vals.map(v => v[0]) },
+  { name: "1–30 days", color: "var(--a1)", values: vals.map(v => v[1]) },
+  { name: "31–60 days", color: "var(--a2)", values: vals.map(v => v[2]) },
+  { name: "61–90 days", color: "var(--a3)", values: vals.map(v => v[3]) },
+  { name: "90+ days", color: "var(--a4)", values: vals.map(v => v[4]) },
+];
+const agingLegend = `<div class="legend"><span><i style="background:var(--a0)"></i>Not yet due</span><span><i style="background:var(--a1)"></i>1–30</span><span><i style="background:var(--a2)"></i>31–60</span><span><i style="background:var(--a3)"></i>61–90</span><span><i style="background:var(--a4)"></i>90+ days overdue</span></div>`;
+let CHARTS = [];
+
+function nextStep(d) {
+  const steps = [];
+  if (d.tier === "Delinquent") steps.push(d.max_dpd > 150 ? (d.insured ? "File trade-credit insurance claim; send legal notice" : "Send legal notice; senior management meeting") : "Senior visit; agree a written payment plan");
+  else if (d.od60 > 0) steps.push("RM call today; share statement of account");
+  else if (d.od31 > 0) steps.push("Payment reminder; confirm cheque dates");
+  else steps.push("Routine reminder before due dates");
+  if (d.open_disputes > 0) steps.push(`Close ${inr(d.open_disputes)} of open challan disputes first`);
+  if (d.bounces > 0) steps.push("Ask for RTGS instead of cheques");
+  return steps;
+}
+
+function ruleMemo(d) {
+  const r = d.reasons.map(x => "- " + x.text).join("\n") || "- No strong risk signals";
+  const m = d.mitigants.map(x => "- " + x.text).join("\n") || "- None stand out";
+  const lim = d.rec_limit === 0 ? "stop new credit; supply only against advance payment" : `${d.rec_limit < d.limit ? "reduce" : d.rec_limit > d.limit ? "raise" : "keep"} the limit at ${inr(d.rec_limit)} (now ${inr(d.limit)})`;
+  return `${d.name} (${d.segment}, ${d.city}) owes ${inr(d.outstanding)}, of which ${inr(d.od60)} is more than 60 days overdue. Score ${d.score}, ${d.tier} risk${d.tier === "Delinquent" ? "" : `, ${pct(d.pd, 1)} chance of going 90+ days overdue in the next 90 days`}.
+
+What raises risk
+${r}
+
+What helps
+${m}
+
+Recommendation: ${d.action}. Suggest we ${lim}.`;
+}
+function ruleReminder(d) {
+  const open = d.invoices.filter(i => i.outstanding > 0 && i.dpd > 0).slice(0, 5);
+  const lines = open.map(i => `  ${i.id}  dated ${fmtDate(i.date)}  ${inr(i.outstanding)} (${i.dpd} days overdue)`).join("\n") || "  (see attached statement)";
+  return `Subject: Statement of account – ${d.name} – overdue ${inr(d.overdue)}
+
+Dear Accounts team,
+
+Thank you for your continued business. As per our records, ${inr(d.overdue)} is currently overdue against your account. The oldest open invoices are:
+${lines}
+
+${d.open_disputes > 0 ? `We also see ${inr(d.open_disputes)} of challans under dispute. Our team will call to close these this week so they don't hold up the rest.\n\n` : ""}Could you please share the payment date for these invoices by Friday? If any of them is pending on your side for a reason we can help with, let us know and we'll sort it out quickly.
+
+Regards,
+${USERS[S.user]?.name || "Credit team"}
+Credit & Collections`;
+}
+
+// ---------- views ----------
+function viewOverview() {
+  const P_ = D.portfolio, now = P_[P_.length - 1], prev = P_[P_.length - 4];
+  const od60 = now.od[2] + now.od[3], od60p = prev.od[2] + prev.od[3];
+  const live = DEVS;
+  const action = live.filter(d => ACTION_SEV[d.action] >= 2).length;
+  const carry = now.out * CFG.cost_of_funds / 12;
+  const delta = (a, b, fmt, badUp = true) => { const dd = a - b; const cls = (dd > 0) === badUp ? "up-bad" : "down-good"; return `<div class="d ${Math.abs(dd) < 1e-9 ? "" : cls}">${dd >= 0 ? "▲" : "▼"} ${fmt(Math.abs(dd))} vs 3 months ago</div>`; };
+  const cells = [];
+  const counts = {};
+  live.filter(d => d.tier !== "Delinquent").forEach(d => { const k = d.tier + "|" + d.exposure_tier; (counts[k] ||= { n: 0, amt: 0 }); counts[k].n++; counts[k].amt += d.outstanding; });
+  const dq = live.filter(d => d.tier === "Delinquent");
+  ["High", "Medium", "Low"].forEach(t => {
+    cells.push(`<div class="ax">${t} risk</div>`);
+    ["Low", "Medium", "High"].forEach(e => {
+      const c = counts[t + "|" + e] || { n: 0, amt: 0 }, act = CFG.action_matrix[t + "|" + e];
+      cells.push(`<button class="cell sev${ACTION_SEV[act]}" data-act="mcell" data-tier="${t}" data-exp="${e}" aria-label="${t} risk, ${e} exposure: ${c.n} accounts"><span class="n">${c.n}</span><span class="amt">${inr(c.amt)}</span><span class="act">${esc(act)}</span></button>`);
+    });
+  });
+  cells.push(`<div></div>`, ...["Low", "Medium", "High"].map((e, i) => `<div class="ax">${e} exposure<br><span style="text-transform:none;letter-spacing:0;font-weight:400">${["under ₹50 L", "₹50 L – ₹2 Cr", "over ₹2 Cr"][i]}</span></div>`));
+  const top = [...live].sort((a, b) => b.outstanding - a.outstanding).slice(0, 10);
+  const totalOut = live.reduce((s, d) => s + d.outstanding, 0);
+  const top10 = top.reduce((s, d) => s + d.outstanding, 0);
+  const segs = {};
+  live.forEach(d => { (segs[d.segment] ||= { out: 0, od60: 0, n: 0 }); segs[d.segment].out += d.outstanding; segs[d.segment].od60 += d.od60; segs[d.segment].n++; });
+
+  CHARTS.push(() => columns(document.getElementById("ch-aging"), {
+    labels: P_.map(p => p.d), series: agingSeries(P_.map(p => [Math.max(0, p.out - p.od.reduce((a, b) => a + b, 0)), ...p.od])),
+    tipTitle: l => "Receivables at " + fmtDate(l), height: 320,
+  }));
+  CHARTS.push(() => lines(document.getElementById("ch-dso"), {
+    labels: P_.map(p => p.d), series: [{ name: "Portfolio DSO", color: "var(--s1)", values: P_.map(p => p.dso), area: true }],
+    fmt: v => Math.round(v) + " d", yMin: 0, tipTitle: l => fmtMon(l),
+  }));
+  return `<div class="page">
+    <div class="page-head"><div><div class="eyebrow">Portfolio · as of ${fmtDate(D.as_of)}</div><h1>Receivables and credit risk</h1>
+      <p>${live.length} active developer and contractor accounts across ${new Set(live.map(d => d.city)).size} cities. Risk tiers come from an early-warning scorecard that predicts which accounts will cross 90 days overdue in the next quarter.</p></div></div>
+    <div class="kpis">
+      <div class="kpi"><div class="eyebrow">Receivables</div><div class="v">${inr(now.out)}</div>${delta(now.out, prev.out, v => inr(v))}</div>
+      <div class="kpi"><div class="eyebrow">Overdue 60+ days</div><div class="v">${pct(od60 / now.out, 1)}</div>${delta(od60 / now.out, od60p / prev.out, v => pct(v, 1))}</div>
+      <div class="kpi"><div class="eyebrow">Portfolio DSO</div><div class="v">${Math.round(now.dso)} days</div>${delta(now.dso, prev.dso, v => Math.round(v) + " d")}</div>
+      <div class="kpi"><div class="eyebrow">Expected loss</div><div class="v">${inr(now.el)}</div>${delta(now.el, prev.el, v => inr(v))}</div>
+      <div class="kpi"><div class="eyebrow">Accounts needing action</div><div class="v">${action}</div><div class="d">${dq.length} already 90+ overdue</div></div>
+      <div class="kpi"><div class="eyebrow">Funding cost of book</div><div class="v">${inr(carry)}<span style="font-size:13px;font-weight:500"> /mo</span></div><div class="d">at ${pct(CFG.cost_of_funds)} cost of funds</div></div>
+    </div>
+    <div class="grid g-wide">
+      <div class="panel"><div class="panel-head"><div><h2>Receivables by age</h2><p>Month-end balances. The darkest band is money more than 90 days past due.</p></div></div>${agingLegend}<div class="chart" id="ch-aging"></div></div>
+      <div class="panel"><div class="panel-head"><div><h2>Risk matrix</h2><p>Likelihood of going bad × money at stake. Each cell maps to a credit action. Click to see the accounts.</p></div></div>
+        <div class="matrix">${cells.join("")}</div>
+        <button class="delq" data-act="dq"><span><b>${dq.length} accounts already 90+ days overdue</b><br><span class="muted" style="font-size:12px">Handled by collections and legal, outside the early-warning model</span></span><b class="num">${inr(dq.reduce((s, d) => s + d.outstanding, 0))}</b></button>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="panel"><div class="panel-head"><div><h2>Portfolio DSO</h2><p>Receivables ÷ average daily billing (last 90 days).</p></div></div><div class="chart" id="ch-dso"></div></div>
+      <div class="panel"><div class="panel-head"><div><h2>Concentration</h2><p>Top 10 accounts hold ${pct(top10 / totalOut)} of receivables.</p></div></div>
+        <div class="table-wrap" style="border:0"><table><tbody>${top.map(d => `<tr class="click" data-act="open" data-id="${d.id}"><td>${esc(d.name)}<span class="sub">${esc(d.segment)}</span></td><td class="r">${inr(d.outstanding)}<span class="sub">${pct(d.outstanding / totalOut, 1)}</span></td><td>${pill(d.tier)}</td></tr>`).join("")}</tbody></table></div></div>
+      <div class="panel"><div class="panel-head"><div><h2>By segment</h2><p>Where the overdue money sits.</p></div></div>
+        <div class="table-wrap" style="border:0"><table><thead><tr><th>Segment</th><th class="r">Owed</th><th class="r">60+ overdue</th></tr></thead><tbody>${Object.entries(segs).sort((a, b) => b[1].out - a[1].out).map(([k, v]) => `<tr><td>${esc(k)}<span class="sub">${v.n} accounts</span></td><td class="r">${inr(v.out)}</td><td class="r">${pct(v.od60 / v.out, 1)}</td></tr>`).join("")}</tbody></table></div></div>
+    </div>
+  </div>`;
+}
+
+function filteredQueue() {
+  let rows = visibleDevs();
+  const f = S.f;
+  if (f.aiIds) rows = rows.filter(d => f.aiIds.includes(d.id));
+  if (f.tier) rows = rows.filter(d => d.tier === f.tier && (!f.exp || d.exposure_tier === f.exp));
+  if (f.seg) rows = rows.filter(d => d.segment === f.seg);
+  if (f.city) rows = rows.filter(d => d.city === f.city);
+  if (f.q) { const q = f.q.toLowerCase(); rows = rows.filter(d => (d.name + " " + d.id + " " + d.rm + " " + d.city).toLowerCase().includes(q)); }
+  const { key, dir } = S.sort;
+  return [...rows].sort((a, b) => (a[key] > b[key] ? 1 : a[key] < b[key] ? -1 : 0) * dir);
+}
+
+function viewQueue() {
+  const u = USERS[S.user], rows = filteredQueue();
+  const segs = [...new Set(DEVS.map(d => d.segment))], cities = [...new Set(DEVS.map(d => d.city))];
+  const fl = S.f.tier ? `${S.f.tier === "Delinquent" ? "Delinquent accounts" : `${S.f.tier} risk${S.f.exp ? ", " + S.f.exp.toLowerCase() + " exposure" : ""}`}` : "";
+  const th = (k, l, cls = "") => `<th class="${cls}" data-sort="${k}" aria-sort="${S.sort.key === k ? (S.sort.dir > 0 ? "ascending" : "descending") : "none"}">${l}${S.sort.key === k ? (S.sort.dir > 0 ? " ↑" : " ↓") : ""}</th>`;
+  return `<div class="page">
+    <div class="page-head"><div><div class="eyebrow">${u.rm ? "Your accounts · " + esc(u.rm) : "All accounts"}</div><h1>Risk queue</h1>
+      <p>Worst first. Each row shows the scorecard's view, the credit action from the risk matrix, and the main reason behind it.</p></div>
+      ${DOWNLOADS ? `<button class="btn" data-act="csv">Export action list (CSV)</button>` : ""}</div>
+    ${SAMPLE ? `<form class="panel" data-act="ask" style="display:flex;flex-direction:column;gap:8px">
+      <label class="field" for="ask-q">Ask the portfolio in plain English</label>
+      <div class="toolbar"><input type="search" id="ask-q" placeholder="e.g. Pune developers with more than ₹20 lakh overdue 60+ days" value="${esc(S.f.aiQ || "")}"><button class="btn primary" type="submit">Ask</button></div>
+      <div class="ai-tag" id="ask-status">${S.f.aiLabel ? esc(S.f.aiLabel) : "Claude turns your question into filters on this list."}</div></form>` : ""}
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search developer, ID, RM or city" value="${esc(S.f.q)}" aria-label="Search accounts">
+      <select id="seg" aria-label="Segment"><option value="">All segments</option>${segs.map(s => `<option ${S.f.seg === s ? "selected" : ""}>${esc(s)}</option>`).join("")}</select>
+      <select id="city" aria-label="City"><option value="">All cities</option>${cities.map(s => `<option ${S.f.city === s ? "selected" : ""}>${esc(s)}</option>`).join("")}</select>
+      ${fl || S.f.aiIds ? `<span class="chip">${esc(fl || "AI filter")}</span><button class="btn small" data-act="clear">Clear filters</button>` : ""}
+      <span class="muted" style="margin-left:auto">${rows.length} accounts · ${inr(rows.reduce((s, d) => s + d.outstanding, 0))}</span>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr>${th("name", "Account")}${th("priorityRank", "Risk")}${th("score", "Score", "r")}${th("outstanding", "Owed", "r")}${th("od60", "60+ overdue", "r")}${th("max_dpd", "Max DPD", "r")}<th>Action</th><th>Main reason</th></tr></thead>
+      <tbody>${rows.length ? rows.map(d => `<tr class="click" data-act="open" data-id="${d.id}">
+        <td><b>${esc(d.name)}</b><span class="sub">${esc(d.segment)} · ${esc(d.city)} · ${esc(d.rm)}</span></td>
+        <td>${pill(d.tier)}<span class="sub">${d.tier === "Delinquent" ? "already 90+" : "PD " + pct(d.pd, 1)}</span></td>
+        <td class="r">${d.score}</td><td class="r">${inr(d.outstanding)}</td><td class="r">${inr(d.od60)}</td><td class="r">${d.max_dpd}</td>
+        <td>${esc(d.action)}${S.decisions[d.id] ? `<span class="sub">Decision logged</span>` : ""}</td>
+        <td class="reason-cell">${esc(d.reasons[0]?.text || "No strong risk signals")}</td></tr>`).join("") : `<tr><td colspan="8" class="empty">No accounts match these filters.</td></tr>`}</tbody>
+    </table></div>
+  </div>`;
+}
+
+function viewAccount() {
+  const vis = visibleDevs();
+  let d = BY_ID[S.devId];
+  if (!d || !vis.includes(d)) d = [...vis].sort((a, b) => a.priorityRank - b.priorityRank).find(x => x.tier !== "Delinquent") || vis[0];
+  S.devId = d.id;
+  const u = USERS[S.user];
+  const bands = [[300, HIGH_LINE, "var(--serious)"], [HIGH_LINE, LOW_LINE, "var(--warn)"], [LOW_LINE, 900, "var(--good)"]];
+  const gauge = bands.map(([a, b, c]) => `<span style="width:${(b - a) / 6}%;background:${c};opacity:.85"></span>`).join("");
+  const mk = Math.max(0, Math.min(100, (d.score - 300) / 6));
+  const dec = S.decisions[d.id];
+  const maxImp = Math.max(0.01, ...d.reasons.map(r => r.impact), ...d.mitigants.map(r => -r.impact));
+  CHARTS.push(() => lines(document.getElementById("ch-score"), {
+    labels: d.hist.d, series: [{ name: "Score", color: "var(--s1)", values: d.hist.score }], fmt: v => Math.round(v),
+    yMin: 300, yMax: 900, refs: [{ v: LOW_LINE, label: "Low-risk line " + LOW_LINE, color: "var(--good)" }, { v: HIGH_LINE, label: "High-risk line " + HIGH_LINE, color: "var(--serious)", below: true }],
+  }));
+  CHARTS.push(() => columns(document.getElementById("ch-bill"), {
+    labels: d.months.slice(-12), stacked: false,
+    series: [{ name: "Billed", color: "var(--s1)", values: d.billed.slice(-12) }, { name: "Collected", color: "var(--s2)", values: d.collected.slice(-12) }],
+    tipTitle: l => fmtMon(l), height: 200,
+  }));
+  CHARTS.push(() => columns(document.getElementById("ch-od"), {
+    labels: d.hist.d, series: [{ name: "Overdue 60+ days", color: "var(--a3)", values: d.hist.od60 }],
+    tipTitle: l => "Month-end " + fmtDate(l), height: 200,
+  }));
+  const steps = nextStep(d);
+  return `<div class="page">
+    <div class="toolbar"><button class="btn ghost small" data-act="go" data-view="queue">← Risk queue</button>
+      <select id="acct-pick" aria-label="Choose account" style="max-width:100%">${[...vis].sort((a, b) => a.name.localeCompare(b.name)).map(x => `<option value="${x.id}" ${x.id === d.id ? "selected" : ""}>${esc(x.name)} (${x.id})</option>`).join("")}</select></div>
+    <div class="panel acct-head">
+      <div><div class="eyebrow">${d.id} · ${esc(d.segment)}</div><h1>${esc(d.name)}</h1>
+        <div class="acct-meta">${pill(d.tier)}<span class="chip">${esc(d.city)}</span><span class="chip">RM: ${esc(d.rm)}</span><span class="chip">${d.terms}-day terms</span><span class="chip">${d.projects} sites on record</span><span class="chip">${d.insured ? "Trade-credit insured" : "Not insured"}</span><span class="chip">Since ${fmtDate(d.onboarded)}</span></div></div>
+      <div class="scorebox"><div class="eyebrow">Risk score</div><div class="s num">${d.score}</div>
+        <div class="muted" style="font-size:12px">${d.tier === "Delinquent" ? "Already 90+ days overdue" : pct(d.pd, 1) + " chance of 90+ overdue within 90 days"}</div>
+        <div class="gauge-wrap"><div class="gauge">${gauge}</div><div class="gauge-marker" style="left:${mk}%"></div><div class="gauge-scale"><span>300</span><span>600</span><span>900</span></div></div></div>
+    </div>
+    <div class="facts">
+      <div><div class="eyebrow">Owed now</div><div class="v">${inr(d.outstanding)}</div><div class="d">${pct(d.utilisation)} of ${inr(d.limit)} limit</div></div>
+      <div><div class="eyebrow">Overdue 60+</div><div class="v">${inr(d.od60)}</div><div class="d">oldest invoice ${d.max_dpd} days past due</div></div>
+      <div><div class="eyebrow">DSO</div><div class="v">${d.dso >= 400 ? "400+" : Math.round(d.dso)} days</div><div class="d">${d.dso_trend >= 0 ? "up" : "down"} ${Math.abs(d.dso_trend)} in 3 months</div></div>
+      <div><div class="eyebrow">Collection efficiency</div><div class="v">${pct(d.coll_eff)}</div><div class="d">of dues in the last 90 days</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="panel"><div class="panel-head"><div><h2>Why this score</h2><p>Each bar is how much a signal moves this account away from an average one.</p></div></div>
+        <h3 style="margin-bottom:8px">Raising risk</h3>
+        <ul class="reasons">${d.reasons.length ? d.reasons.map(r => `<li><div class="bar-mini" style="width:${Math.max(6, r.impact / maxImp * 70)}px"></div><span>${esc(r.text)}</span></li>`).join("") : `<li><span></span><span class="muted">No strong risk signals</span></li>`}</ul>
+        <h3 style="margin:14px 0 8px">Lowering risk</h3>
+        <ul class="reasons">${d.mitigants.length ? d.mitigants.map(r => `<li><div class="bar-mini neg" style="width:${Math.max(6, -r.impact / maxImp * 70)}px"></div><span>${esc(r.text)}</span></li>`).join("") : `<li><span></span><span class="muted">Nothing stands out</span></li>`}</ul>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:12px"><div><h2>Recommended credit action</h2></div>
+        <div class="recbox"><div><div class="eyebrow">Action</div><div class="big">${esc(d.action)}</div></div>
+          <div><div class="eyebrow">Credit limit</div><div class="big num">${d.rec_limit === 0 ? "₹0 new credit" : inr(d.rec_limit)}</div><div class="muted" style="font-size:12px">now ${inr(d.limit)}</div></div></div>
+        <div><h3 style="margin-bottom:6px">Next steps for collections</h3><ul style="margin:0;padding-left:18px">${steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul></div>
+        ${dec ? `<div><h3 style="margin-bottom:6px">Decision log</h3><ul class="log"><li><b>${esc(dec.choice)}</b>${dec.limit ? " · limit " + inr(dec.limit) : ""}${dec.reason ? " · " + esc(dec.reason) : ""}<br><span class="muted" style="font-size:12px">${esc(dec.by)} · ${esc(dec.at)} · saved in this browser</span></li></ul></div>` : ""}
+        ${u.canDecide ? `<form data-act="decide" style="display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px">
+          <div class="row-gap"><label class="field" for="dec-choice" style="flex:1 1 180px">Your decision<select id="dec-choice"><option>Accept recommendation</option><option>Override: keep current limit</option><option>Override: custom limit</option></select></label>
+          <label class="field" for="dec-limit" style="flex:1 1 140px">Custom limit (₹ lakh)<input type="number" id="dec-limit" min="0" step="5" placeholder="${Math.round(d.rec_limit / 1e5)}"></label></div>
+          <label class="field" for="dec-reason">Reason (required for overrides)<input type="text" id="dec-reason" placeholder="e.g. Promoter guarantee received; payment plan signed"></label>
+          <div class="row-gap"><button class="btn primary" type="submit">Log decision</button><span class="err" id="dec-err"></span></div></form>`
+          : `<p class="muted" style="margin:0;font-size:12.5px">${u.role === "Sales RM" ? "Only the credit team can change limits. If you have context the model can't see (a new order, a promoter guarantee), add it to the account note so the analyst sees it." : "Read-only for your role."}</p>`}
+      </div>
+    </div>
+    <div class="panel"><div class="panel-head"><div><h2>Analyst note</h2><p>${SAMPLE ? "Claude drafts a short credit memo or a collections email from this account's data. Review before sending." : "Rule-based summary built from the reason codes. The AI version is available in the Claude-hosted link."}</p></div>
+      <div class="row-gap">${SAMPLE ? `<button class="btn primary" data-act="ai-memo">Draft credit memo</button><button class="btn" data-act="ai-mail">Draft reminder email</button><button class="btn" data-act="ai-stop" hidden id="ai-stop">Stop</button>` : `<button class="btn" data-act="rule-memo">Memo</button><button class="btn" data-act="rule-mail">Reminder email</button>`}<button class="btn" data-act="copy-note">Copy</button></div></div>
+      <div class="ai-out" id="ai-out">${esc(ruleMemo(d))}</div><div class="ai-tag" id="ai-tag">${SAMPLE ? "Showing the rule-based note until you ask Claude." : "Rule-based note"}</div></div>
+    <div class="grid g3">
+      <div class="panel"><div class="panel-head"><div><h2>Score history</h2><p>Month-end scores, live model.</p></div></div><div class="chart" id="ch-score"></div></div>
+      <div class="panel"><div class="panel-head"><div><h2>Billed vs collected</h2><p>Last 12 months.</p></div></div><div class="legend"><span><i style="background:var(--s1)"></i>Billed</span><span><i style="background:var(--s2)"></i>Collected</span></div><div class="chart" id="ch-bill"></div></div>
+      <div class="panel"><div class="panel-head"><div><h2>Overdue 60+ days</h2><p>Month-end balance.</p></div></div><div class="chart" id="ch-od"></div></div>
+    </div>
+    <div class="grid g-wide">
+      <div class="panel"><div class="panel-head"><div><h2>Recent invoices</h2><p>Weekly invoices consolidate that week's delivery challans for each site.</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Date</th><th>Due</th><th class="r">Amount</th><th class="r">Still owed</th><th>Status</th></tr></thead>
+        <tbody>${d.invoices.map(i => `<tr><td class="mono">${i.id}</td><td>${fmtDate(i.date)}</td><td>${fmtDate(i.due)}${i.outstanding > 0 && i.dpd > 0 ? `<span class="sub" style="color:var(--crit)">${i.dpd} days overdue</span>` : ""}</td><td class="r">${inr(i.amount)}</td><td class="r">${inr(i.outstanding)}</td><td><span class="chip">${i.status}</span></td></tr>`).join("")}</tbody></table></div></div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+        <div><h2 style="margin-bottom:8px">Open challan disputes</h2>${d.disputes.length ? `<div class="table-wrap"><table><tbody>${d.disputes.map(x => `<tr><td><span class="mono">${x.challan}</span><span class="sub">${esc(x.reason)} · raised ${fmtDate(x.raised)}</span></td><td class="r">${inr(x.amount)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted" style="margin:0">None open.</p>`}</div>
+        <div><h2 style="margin-bottom:8px">Cheque/NACH bounces (180 days)</h2>${d.bounce_list.length ? `<ul style="margin:0;padding-left:18px">${d.bounce_list.map(b => `<li>${fmtDate(b.date)} · ${inr(b.amount)}</li>`).join("")}</ul>` : `<p class="muted" style="margin:0">None.</p>`}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function viewCollections() {
+  const rows = visibleDevs().filter(d => d.od31 > 0).sort((a, b) => b.priority - a.priority);
+  const tot = rows.reduce((s, d) => s + d.od31, 0);
+  return `<div class="page">
+    <div class="page-head"><div><div class="eyebrow">Collections · ${rows.length} accounts with dues 31+ days late</div><h1>Who to chase today</h1>
+      <p>Ordered by overdue money weighted by how likely the account is to slip further. That puts a ₹40 lakh balance at a stressed developer above a ₹60 lakh balance at a developer who always pays, eventually.</p></div></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="kpi"><div class="eyebrow">31+ days overdue</div><div class="v">${inr(tot)}</div><div class="d">across ${rows.length} accounts</div></div>
+      <div class="kpi"><div class="eyebrow">Top 10 hold</div><div class="v">${pct(rows.slice(0, 10).reduce((s, d) => s + d.od31, 0) / Math.max(tot, 1))}</div><div class="d">of that money</div></div>
+      <div class="kpi"><div class="eyebrow">Tied up in disputes</div><div class="v">${inr(rows.reduce((s, d) => s + d.open_disputes, 0))}</div><div class="d">close these first</div></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>#</th><th>Account</th><th>Risk</th><th class="r">31+ overdue</th><th class="r">Max DPD</th><th>Next step</th></tr></thead>
+      <tbody>${rows.map((d, i) => `<tr class="click" data-act="open" data-id="${d.id}"><td class="num muted">${i + 1}</td><td><b>${esc(d.name)}</b><span class="sub">${esc(d.rm)} · ${esc(d.city)}</span></td><td>${pill(d.tier)}</td><td class="r">${inr(d.od31)}</td><td class="r">${d.max_dpd}</td><td class="reason-cell">${nextStep(d).map(esc).join("<br>")}</td></tr>`).join("")}</tbody>
+    </table></div></div>`;
+}
+
+function simulate(sim) {
+  const res = { moved: 0, gmv: 0, margin: 0, elAvoided: 0, addRec: 0, high: 0, accounts: [] };
+  const live = DEVS.filter(d => d.tier !== "Delinquent");
+  let daily = 0; DEVS.forEach(d => daily += d.billing_90d / 90);
+  live.forEach(d => {
+    const hit = sim.seg === "All" || d.segment === sim.seg;
+    const dd = hit && sim.shock ? { ...d, days_late: d.days_late + sim.shock, dso: d.dso + sim.shock, dso_trend: d.dso_trend + sim.shock } : d;
+    const p = pdOf(dd);
+    const t = tierOf(p, sim.high, sim.med), act = CFG.action_matrix[t + "|" + d.exposure_tier];
+    if (t === "High") res.high++;
+    if (t !== d.tier) res.moved++;
+    const cut = ACTION_GMV_CUT[act] || 0, lost = cut * d.monthly_billing;
+    res.gmv += lost; res.margin += lost * sim.margin;
+    res.elAvoided += lost * 3 * p * sim.lgd;
+    if (hit && sim.shock) res.addRec += d.billing_90d / 90 * sim.shock;
+  });
+  const out = D.portfolio[D.portfolio.length - 1].out;
+  res.dsoNow = out / daily; res.dsoAfter = (out + res.addRec) / daily;
+  res.carry = res.addRec * CFG.cost_of_funds / 12;
+  return res;
+}
+
+function viewSimulator() {
+  const s = S.sim, r = simulate(s);
+  const segs = ["All", ...new Set(DEVS.map(d => d.segment))];
+  const curve = [...new Set([0.06, 0.08, 0.10, 0.12, 0.15, 0.20, 0.30, 0.50, s.high].map(c => Math.max(c, s.med + 0.01)))].sort((a, b) => a - b).map(c => {
+    const rr = simulate({ ...s, high: c });
+    return { x: rr.margin / 1e5, y: rr.elAvoided / 1e5, key: c, label: pct(c), tip: `<b>High-risk cutoff ${pct(c)}</b><div class="row"><span>Margin given up / month</span><b>${inr(rr.margin)}</b></div><div class="row"><span>Expected loss avoided (90d)</span><b>${inr(rr.elAvoided)}</b></div><div class="row"><span>Accounts in High tier</span><b>${rr.high}</b></div>` };
+  });
+  CHARTS.push(() => xy(document.getElementById("ch-trade"), { pts: curve, path: true, highlight: s.high,
+    xFmt: v => "₹" + v.toFixed(v < 10 ? 1 : 0) + " L", yFmt: v => "₹" + v.toFixed(v < 10 ? 1 : 0) + " L", xLabel: "Gross margin given up per month (₹ lakh)", yLabel: "Expected loss avoided, 90 days (₹ lakh)", height: 280 }));
+  const gain = r.elAvoided - r.margin * 3;
+  return `<div class="page">
+    <div class="page-head"><div><div class="eyebrow">What-if</div><h1>Credit policy simulator</h1>
+      <p>Every tightening of credit loses some sales. This shows both sides: the loss you avoid by cutting supply to risky accounts, and the margin you give up. Scores are recomputed in your browser with the same model.</p></div></div>
+    <div class="panel"><form class="sliders" id="sim-form" onsubmit="return false">
+      <label for="sim-med">Watch-list cutoff (PD) <output id="o-med">${pct(s.med)}</output><input type="range" id="sim-med" min="0.02" max="0.15" step="0.01" value="${s.med}"></label>
+      <label for="sim-high">High-risk cutoff (PD) <output id="o-high">${pct(s.high)}</output><input type="range" id="sim-high" min="0.06" max="0.5" step="0.01" value="${s.high}"></label>
+      <label for="sim-shock">Payment delay shock <output id="o-shock">+${s.shock} days</output><input type="range" id="sim-shock" min="0" max="60" step="5" value="${s.shock}"></label>
+      <label for="sim-seg">Shock applies to<select id="sim-seg">${segs.map(x => `<option ${x === s.seg ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></label>
+      <label for="sim-lgd">Loss given default <output id="o-lgd">${pct(s.lgd)}</output><input type="range" id="sim-lgd" min="0.2" max="0.9" step="0.05" value="${s.lgd}"></label>
+      <label for="sim-margin">Gross margin on sales <output id="o-margin">${pct(s.margin, 1)}</output><input type="range" id="sim-margin" min="0.04" max="0.2" step="0.005" value="${s.margin}"></label>
+    </form></div>
+    <div class="kpis">
+      <div class="kpi"><div class="eyebrow">Accounts in High tier</div><div class="v">${r.high}</div><div class="d">${r.moved} change tier vs today</div></div>
+      <div class="kpi"><div class="eyebrow">Sales held back</div><div class="v">${inr(r.gmv)}<span style="font-size:13px;font-weight:500"> /mo</span></div><div class="d">from limit cuts and pauses</div></div>
+      <div class="kpi"><div class="eyebrow">Margin given up</div><div class="v">${inr(r.margin)}<span style="font-size:13px;font-weight:500"> /mo</span></div><div class="d">at ${pct(s.margin, 1)} gross margin</div></div>
+      <div class="kpi"><div class="eyebrow">Expected loss avoided</div><div class="v">${inr(r.elAvoided)}</div><div class="d">on new credit over 90 days</div></div>
+      <div class="kpi"><div class="eyebrow">DSO after shock</div><div class="v">${Math.round(r.dsoAfter)} days</div><div class="d">from ${Math.round(r.dsoNow)} today</div></div>
+      <div class="kpi"><div class="eyebrow">Extra funding cost</div><div class="v">${inr(r.carry)}<span style="font-size:13px;font-weight:500"> /mo</span></div><div class="d">on ${inr(r.addRec)} more receivables</div></div>
+    </div>
+    <div class="grid g-wide">
+      <div class="panel"><div class="panel-head"><div><h2>The trade-off curve</h2><p>Each point is a different High-risk cutoff. Lower cutoffs pause more accounts: more loss avoided, more margin lost. The orange point is your current setting.</p></div></div><div class="chart" id="ch-trade"></div></div>
+      <div class="panel"><h2 style="margin-bottom:8px">Reading this setting</h2>
+        <p style="margin:0 0 10px">Over the next quarter, this policy avoids about <b>${inr(r.elAvoided)}</b> of expected loss and gives up about <b>${inr(r.margin * 3)}</b> of margin. ${gain >= 0 ? `Net, it <b>protects ${inr(gain)}</b>.` : `Net, it <b>costs ${inr(-gain)}</b> more than it saves, so the cutoff may be too strict.`}</p>
+        <p style="margin:0 0 10px">Rule of thumb: holding back credit pays only when <b>PD × loss given default</b> is bigger than the margin you'd earn. At these settings that break-even is a PD of about <b>${pct(s.margin / s.lgd)}</b>. Accounts below it are usually better kept on credit and watched.</p>
+        <p style="margin:0 0 10px">${s.shock ? `A ${s.shock}-day payment slowdown${s.seg === "All" ? "" : " among " + esc(s.seg.toLowerCase()) + "s"} adds about ${inr(r.addRec)} to receivables and ${inr(r.carry)} a month in funding cost, before anyone defaults.` : "Move the delay shock slider to see what a slowdown, such as a monsoon or a sales freeze, does to cash."}</p>
+        <p class="muted" style="margin:0;font-size:12.5px">Assumptions: limit cuts hold back 15–25% of an account's monthly sales, advance-only holds back 50%, a pause holds back 100%. Loss avoided counts only new credit not extended; money already owed is unaffected. Margin is a slider because it varies by material. Not counted: the funding cost saved on sales you don't make, and the relationship cost of cutting a customer off.</p></div>
+    </div></div>`;
+}
+
+function viewModel() {
+  const M = D.model, m = M.metrics;
+  const cal = M.calibration.map(c => ({ x: c.predicted, y: c.observed, r: Math.max(4, Math.min(10, Math.sqrt(c.n) / 1.6)), tip: `<b>PD band ${esc(c.band)}</b><div class="row"><span>Predicted</span><b>${pct(c.predicted, 1)}</b></div><div class="row"><span>Observed</span><b>${pct(c.observed, 1)}</b></div><div class="row"><span>Snapshots</span><b>${c.n}</b></div>` }));
+  CHARTS.push(() => xy(document.getElementById("ch-cal"), { pts: cal, diag: true, xFmt: v => pct(v), yFmt: v => pct(v), xMax: 0.6, yMax: 0.6, xLabel: "Predicted bad rate", yLabel: "Observed bad rate", height: 260 }));
+  CHARTS.push(() => hbars(document.getElementById("ch-coef"), [...M.features].sort((a, b) => b.coef - a.coef).map(f => ({ label: f.label, value: f.coef }))));
+  const leads = M.leads.filter(l => l.scorecard > 0).map(l => l.scorecard).sort((a, b) => a - b);
+  const aging = M.comparison[0], sc = M.comparison[2];
+  return `<div class="page">
+    <div class="page-head"><div><div class="eyebrow">Out-of-time backtest</div><h1>How far to trust the score</h1>
+      <p>The model was trained on month-end snapshots from ${esc(m.train_period)} and tested on ${esc(m.test_period)}, data it never saw. A snapshot counts as "bad" if the account crosses ₹5 lakh (or 10% of its limit) overdue by 90+ days within the next 90 days.</p></div></div>
+    <div class="kpis">
+      <div class="kpi"><div class="eyebrow">AUC (test)</div><div class="v">${m.auc.toFixed(2)}</div><div class="d">black-box benchmark ${m.gbm_auc.toFixed(2)}</div></div>
+      <div class="kpi"><div class="eyebrow">Base bad rate</div><div class="v">${pct(m.base_rate, 1)}</div><div class="d">per 90-day window</div></div>
+      <div class="kpi"><div class="eyebrow">Alerts per month</div><div class="v">${sc.alerts_per_month.toFixed(0)}</div><div class="d">vs ${aging.alerts_per_month.toFixed(0)} from the aging report</div></div>
+      <div class="kpi"><div class="eyebrow">Alert precision</div><div class="v">${pct(sc.precision)}</div><div class="d">vs ${pct(aging.precision)} from the aging report</div></div>
+      <div class="kpi"><div class="eyebrow">Defaults flagged early</div><div class="v">${m.caught_scorecard}/${m.events}</div><div class="d">accounts that went bad in test</div></div>
+      <div class="kpi"><div class="eyebrow">Median warning</div><div class="v">${m.median_lead_scorecard} days</div><div class="d">before crossing 90+ overdue</div></div>
+    </div>
+    <div class="panel"><div class="panel-head"><div><h2>Against the rules credit teams use today</h2><p>The aging report flags anyone with dues 60+ days late. In construction almost everyone pays late, so it flags most of the book and buries the real problems.</p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Method</th><th class="r">Alerts / month</th><th class="r">Share of book flagged</th><th class="r">Precision</th><th class="r">Recall</th><th class="r">Alerts reviewed per bad account found</th></tr></thead>
+      <tbody>${M.comparison.map(c => `<tr><td>${esc(c.method)}</td><td class="r">${c.alerts_per_month.toFixed(1)}</td><td class="r">${pct(c.alert_rate)}</td><td class="r">${pct(c.precision, 1)}</td><td class="r">${pct(c.recall)}</td><td class="r">${c.precision > 0 ? (1 / c.precision).toFixed(1) : "–"}</td></tr>`).join("")}</tbody></table></div>
+      <p class="muted" style="font-size:12.5px;margin:10px 0 0">Precision: share of alerts that really went bad. Recall: share of bad accounts that got an alert. The black box is a little more accurate but can't produce reason codes a credit team can defend, so the scorecard is the one in production here.</p></div>
+    <div class="grid g2">
+      <div class="panel"><div class="panel-head"><div><h2>What the score weighs</h2><p>Standardised logistic-regression weights.</p></div></div><div class="chart" id="ch-coef"></div>
+        <p class="muted" style="font-size:12.5px;margin:10px 0 0">Dropped because their sign flipped against credit logic (collinearity): ${M.dropped.map(x => esc(x.label)).join(", ") || "none"}. Relationship age was left out on purpose: in this data most accounts start on the same date, so it would only track the calendar.</p></div>
+      <div class="panel"><div class="panel-head"><div><h2>Calibration</h2><p>Do predicted probabilities match what happened? Dot size reflects the number of snapshots.</p></div></div><div class="chart" id="ch-cal"></div>
+        <p class="muted" style="font-size:12.5px;margin:10px 0 0">The ranking is good, but the top band over-predicts (about ${pct(M.calibration[M.calibration.length - 1].predicted)} predicted vs ${pct(M.calibration[M.calibration.length - 1].observed)} observed), because some stressed accounts recover. Fine for tiers and alerts; recalibrate before using PD for loss provisioning.</p></div>
+    </div>
+    <div class="panel"><h2 style="margin-bottom:8px">Known limits</h2>
+      <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;max-width:90ch">
+        <li>Trained on synthetic data. On real data the features stay the same, but weights, tiers and cutoffs must be refit and re-tested.</li>
+        <li>Only ${m.events} accounts went bad in the test window, so precision and recall can move a few points either way.</li>
+        <li>The model only sees payment behaviour. It can't see project approvals, sales velocity or promoter news, which is where the sudden shocks come from. Those need RM input or outside data such as RERA filings.</li>
+        <li>Warning lead times range from ${leads[0] ?? 0} to ${leads[leads.length - 1] ?? 0} days. Short ones mean the account deteriorated fast; the RM channel matters there.</li>
+      </ul></div>
+  </div>`;
+}
+
+function viewAbout() {
+  const c = D.counts;
+  return `<div class="page"><div class="page-head"><div><div class="eyebrow">About</div><h1>What this is, and what it isn't</h1></div></div>
+    <div class="panel" style="max-width:80ch;display:flex;flex-direction:column;gap:10px">
+      <p style="margin:0"><b>CrediSite</b> is a prototype early-warning and credit-policy tool for a B2B construction-materials platform that sells to developers and contractors on credit. It was built as a product exercise. <b>Every company, person and number is synthetic.</b> None of it is ArisInfra data, and the developers named here are invented.</p>
+      <h2>How the data was simulated</h2>
+      <p style="margin:0">${DEVS.length} accounts over two years: ${c.projects.toLocaleString("en-IN")} sites, ${c.challans.toLocaleString("en-IN")} truck challans, ${c.invoices.toLocaleString("en-IN")} invoices, ${c.payments.toLocaleString("en-IN")} receipts, ${c.disputes.toLocaleString("en-IN")} challan disputes and ${c.bounces} cheque bounces. Material mix follows the construction stage (excavation, foundation, superstructure, finishing). Volumes dip in the monsoon and peak in March. Everyone pays late, by an amount that depends on segment. Some accounts hit a stress event that builds over weeks: some recover, some default, and a few fail suddenly. Stressed accounts raise more disputes and bounce more cheques. Supply is put on hold once 90+ day dues cross 15% of the limit, and EPC contractors pay in lumps when their own bills clear.</p>
+      <h2>How the score works</h2>
+      <p style="margin:0">Each month-end, nine payment-behaviour signals are computed using only data available on that date. A logistic-regression scorecard turns them into a probability of going 90+ days overdue within 90 days, shown as a 300–900 score. Tiers plus money at stake pick the credit action. Reason codes come straight from each signal's contribution, so every alert says why.</p>
+      <h2>Demo logins</h2>
+      <p style="margin:0">The sign-in screen is a demo role switch, not real security. The credit analyst sees everything and can log decisions (saved only in your browser). The sales RM sees only their own accounts. The CFO sees the portfolio, simulator and model.</p>
+      <p class="muted" style="margin:0;font-size:12.5px">Built with Python (pandas, scikit-learn) for data and modelling, and a single-file web dashboard. AI notes use Claude when opened through the Claude-hosted link; elsewhere they fall back to rule-based text.</p>
+    </div></div>`;
+}
+
+function viewLogin() {
+  const c = D.counts;
+  return `<div class="login">
+    <section class="login-side"><div class="brand"><b>CrediSite</b><span style="color:inherit;opacity:.8">Risk Desk</span></div>
+      <div><h1>Know which builder will stop paying before the aging report does.</h1>
+      <p>Early-warning credit scoring for construction-materials receivables: who is slipping, why, and what to do about their credit limit today.</p></div>
+      <div class="stats"><div><b>${DEVS.length}</b><span>developer accounts</span></div><div><b>${(c.challans / 1000).toFixed(0)}k</b><span>truck challans</span></div><div><b>${D.model.metrics.median_lead_scorecard} days</b><span>median early warning</span></div></div></section>
+    <section class="login-form"><div><h2>Sign in</h2><p class="muted" style="margin:4px 0 0">Demo accounts only. Pick a role, or type its email and password.</p></div>
+      <div class="demo-users">${Object.entries(USERS).map(([e, u]) => `<button class="demo-user" data-act="pick-user" data-email="${e}"><b>${esc(u.role)} · ${esc(u.name)}</b><small>${esc(e)}</small><span class="mono">demo1234</span></button>`).join("")}</div>
+      <form id="login" style="display:flex;flex-direction:column;gap:10px">
+        <label class="field" for="email">Email<input type="text" id="email" autocomplete="username" placeholder="analyst@credisite.demo"></label>
+        <label class="field" for="pass">Password<input type="password" id="pass" autocomplete="current-password" placeholder="demo1234"></label>
+        <button class="btn primary" type="submit">Sign in</button><div class="err" id="login-err" aria-live="polite"></div></form>
+      <p class="muted" style="font-size:12px;margin:0">Synthetic data. Fictional companies. Not ArisInfra data.</p></section></div>`;
+}
+
+// ---------- render ----------
+const app = document.getElementById("app");
+function render() {
+  CHARTS = [];
+  if (!S.user || !USERS[S.user]) { app.innerHTML = viewLogin(); return; }
+  const u = USERS[S.user];
+  if (!u.views.includes(S.view)) S.view = u.views[0];
+  const body = { overview: viewOverview, queue: viewQueue, account: viewAccount, collections: viewCollections, simulator: viewSimulator, model: viewModel, about: viewAbout }[S.view]();
+  app.innerHTML = `<header class="topbar"><div class="brand"><b>CrediSite</b><span>Risk Desk</span></div><div class="spacer"></div>
+    <div class="asof">Data as of <b>${fmtDate(D.as_of)}</b></div>
+    <div class="who"><span class="role">${esc(u.role)}</span><span>${esc(u.name)}</span><button class="btn small" data-act="logout">Sign out</button></div></header>
+    <div class="notice">Synthetic demo data: fictional developers, simulated payments. Not ArisInfra data.</div>
+    <div class="shell"><nav class="rail" aria-label="Views">${u.views.map(v => `<a href="#${v}" ${v === S.view ? 'aria-current="page"' : ""}><b>${VIEWS[v][0]}</b><small>${VIEWS[v][1]}</small></a>`).join("")}
+      <div class="foot">Scorecard v1 · trained on synthetic data · ${DEVS.length} accounts</div></nav>
+      <main>${body}</main></div>`;
+  CHARTS.forEach(f => { try { f(); } catch (e) { console.error(e); } });
+}
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => CHARTS.forEach(f => { try { f(); } catch {} }), 120); });
+
+function route() {
+  const h = location.hash.replace("#", "");
+  if (h.startsWith("account-")) { S.view = "account"; S.devId = h.slice(8); }
+  else if (VIEWS[h]) S.view = h;
+  render(); window.scrollTo(0, 0);
+}
+addEventListener("hashchange", route);
+function go(view, id) {
+  const h = view === "account" && id ? "account-" + id : view;
+  if (location.hash === "#" + h) { S.view = view; if (id) S.devId = id; render(); } else location.hash = h;
+}
+
+// ---------- events ----------
+let aiCtl = null;
+app.addEventListener("click", async e => {
+  const t = e.target.closest("[data-act],[data-sort]");
+  if (!t) return;
+  if (t.dataset.sort) { const k = t.dataset.sort; S.sort = { key: k, dir: S.sort.key === k ? -S.sort.dir : (["name", "priorityRank"].includes(k) ? 1 : -1) }; render(); return; }
+  const a = t.dataset.act;
+  if (a === "pick-user") { document.getElementById("email").value = t.dataset.email; document.getElementById("pass").value = "demo1234"; document.getElementById("login").requestSubmit(); }
+  if (a === "logout") { S.user = null; store.del("credisite.user"); render(); }
+  if (a === "open") go("account", t.dataset.id);
+  if (a === "go") go(t.dataset.view);
+  if (a === "mcell") { S.f = { ...S.f, tier: t.dataset.tier, exp: t.dataset.exp, aiIds: null }; go("queue"); }
+  if (a === "dq") { S.f = { ...S.f, tier: "Delinquent", exp: null, aiIds: null }; go("queue"); }
+  if (a === "clear") { S.f = { tier: null, exp: null, q: "", seg: "", city: "", aiIds: null, aiLabel: "", aiQ: "" }; render(); }
+  if (a === "rule-memo" || a === "rule-mail") {
+    const d = BY_ID[S.devId]; document.getElementById("ai-out").textContent = a === "rule-memo" ? ruleMemo(d) : ruleReminder(d);
+    document.getElementById("ai-tag").textContent = "Rule-based note";
+  }
+  if (a === "copy-note") {
+    const txt = document.getElementById("ai-out").textContent;
+    try { await navigator.clipboard.writeText(txt); toast("Copied"); }
+    catch { const r = document.createRange(); r.selectNodeContents(document.getElementById("ai-out")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Selected. Press Ctrl+C or ⌘C to copy."); }
+  }
+  if (a === "ai-stop") aiCtl?.abort();
+  if ((a === "ai-memo" || a === "ai-mail") && SAMPLE) aiNote(a === "ai-memo" ? "memo" : "mail");
+  if (a === "csv" && DOWNLOADS) {
+    const rows = filteredQueue();
+    const head = ["id", "name", "segment", "city", "rm", "tier", "pd", "score", "outstanding", "overdue_60_plus", "max_dpd", "current_limit", "recommended_limit", "action", "main_reason"];
+    const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const csv = [head.join(","), ...rows.map(d => [d.id, d.name, d.segment, d.city, d.rm, d.tier, d.pd, d.score, d.outstanding, d.od60, d.max_dpd, d.limit, d.rec_limit, d.action, d.reasons[0]?.text || ""].map(q).join(","))].join("\n");
+    try { await DOWNLOADS.save({ filename: "credisite-action-list.csv", data: csv }); toast("Saved"); } catch (err) { if (err?.code !== "declined") toast("Couldn't save the file here."); }
+  }
+});
+
+async function aiNote(kind) {
+  const d = BY_ID[S.devId], out = document.getElementById("ai-out"), tag = document.getElementById("ai-tag"), stop = document.getElementById("ai-stop");
+  const facts = { name: d.name, segment: d.segment, city: d.city, credit_terms_days: d.terms, credit_limit_inr: d.limit, outstanding_inr: d.outstanding,
+    overdue_buckets_inr: { "1_30": d.od[0], "31_60": d.od[1], "61_90": d.od[2], "90_plus": d.od[3] }, max_days_past_due: d.max_dpd, dso_days: d.dso, dso_change_3m: d.dso_trend,
+    collection_efficiency_90d: d.coll_eff, avg_days_paid_late_90d: d.days_late, order_volume_change_vs_prev_quarter: d.billing_change, part_payment_share: d.partial_share,
+    cheque_bounces_180d: d.bounces, open_dispute_value_inr: d.open_disputes, risk_tier: d.tier, prob_90plus_overdue_next_90d: d.pd, score_300_900: d.score,
+    recommended_action: d.action, recommended_limit_inr: d.rec_limit, risk_reasons: d.reasons.map(r => r.text), mitigants: d.mitigants.map(r => r.text),
+    open_overdue_invoices: d.invoices.filter(i => i.outstanding > 0 && i.dpd > 0).slice(0, 5).map(i => ({ id: i.id, date: i.date, outstanding_inr: i.outstanding, days_overdue: i.dpd })),
+    trade_credit_insured: d.insured, sender: USERS[S.user].name };
+  const prompt = kind === "memo"
+    ? `You are a credit analyst at an Indian B2B construction-materials supplier that sells cement, steel, RMC and aggregates to developers on credit. Write a short internal credit memo for the account below, for the credit head.
+Format, plain text only (no markdown symbols except "- " bullets):
+1. One-paragraph summary (2-3 sentences): who they are, what they owe, how risky.
+2. "Key risks" with 2-4 bullets, citing the numbers.
+3. "Mitigants" with 1-3 bullets.
+4. "Recommendation": the credit action and limit, plus one concrete next step for the RM. If you disagree with the model's recommendation, say why.
+Use Indian units (₹ lakh, ₹ crore). Under 220 words. Don't invent facts beyond the data.
+Account data (synthetic demo data):
+${JSON.stringify(facts)}`
+    : `Write a polite but firm payment reminder email from the credit team of an Indian construction-materials supplier to the accounts team of the customer below. Plain text. Start with a "Subject:" line. List the oldest overdue invoices with amounts in ₹ lakh. If there are open challan disputes, offer to resolve them this week so they don't hold up the rest. Ask for a payment date. Keep the relationship warm: they are a customer we want to keep. Under 180 words. Sign off with the sender's name and "Credit & Collections". Don't invent facts.
+Customer data (synthetic demo data):
+${JSON.stringify(facts)}`;
+  aiCtl = new AbortController(); stop.hidden = false;
+  out.textContent = "Thinking…"; tag.textContent = "Claude is drafting from this account's data.";
+  app.querySelectorAll('[data-act="ai-memo"],[data-act="ai-mail"]').forEach(b => b.disabled = true);
+  try {
+    const { text } = await SAMPLE(prompt, { signal: aiCtl.signal, modelTier: kind === "memo" ? "default" : "quick", onText: ({ text }) => { out.textContent = text; } });
+    out.textContent = text; tag.textContent = "Drafted by Claude from the data above. Check it before you send it.";
+  } catch (err) {
+    if (err?.code === "cancelled") { out.textContent = err.text || ruleMemo(d); tag.textContent = "Stopped."; }
+    else { out.textContent = err?.text || (kind === "memo" ? ruleMemo(d) : ruleReminder(d)); tag.textContent = aiErr(err?.code); }
+  } finally {
+    stop.hidden = true; app.querySelectorAll('[data-act="ai-memo"],[data-act="ai-mail"]').forEach(b => b.disabled = false);
+  }
+}
+
+app.addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === "login") {
+    const em = document.getElementById("email").value.trim().toLowerCase(), pw = document.getElementById("pass").value;
+    if (!USERS[em] || USERS[em].pass !== pw) { document.getElementById("login-err").textContent = "That email and password don't match a demo account. Use one of the three above."; return; }
+    S.user = em; store.set("credisite.user", em, true); S.view = USERS[em].views[0];
+    if (location.hash) location.hash = ""; render(); return;
+  }
+  if (f.dataset.act === "decide") {
+    const choice = document.getElementById("dec-choice").value, reason = document.getElementById("dec-reason").value.trim(), lim = parseFloat(document.getElementById("dec-limit").value);
+    const err = document.getElementById("dec-err"), d = BY_ID[S.devId];
+    if (choice !== "Accept recommendation" && !reason) { err.textContent = "Add a reason for the override."; return; }
+    if (choice === "Override: custom limit" && !(lim >= 0)) { err.textContent = "Enter the custom limit in ₹ lakh."; return; }
+    S.decisions[d.id] = { choice, reason, limit: choice === "Accept recommendation" ? d.rec_limit : choice === "Override: keep current limit" ? d.limit : lim * 1e5, by: USERS[S.user].name, at: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) };
+    store.set("credisite.decisions", S.decisions); render(); toast("Decision logged");
+  }
+  if (f.dataset.act === "ask" && SAMPLE) {
+    const q = document.getElementById("ask-q").value.trim(), st = document.getElementById("ask-status");
+    if (!q) return;
+    st.textContent = "Thinking…";
+    const schema = `Reply with only JSON: {"segments":[], "cities":[], "rms":[], "tiers":[], "min_outstanding_inr":0, "min_overdue_60_plus_inr":0, "min_days_past_due":0, "max_score":900, "sort_by":"risk|outstanding|overdue_60_plus|days_past_due", "limit":0, "summary":"one short line describing the filter"}. Use empty arrays / 0 / 900 for "no filter". limit 0 = no limit.
+Allowed segments: ${JSON.stringify([...new Set(DEVS.map(d => d.segment))])}. Allowed cities: ${JSON.stringify([...new Set(DEVS.map(d => d.city))])}. Allowed RMs: ${JSON.stringify([...new Set(DEVS.map(d => d.rm))])}. Allowed tiers: ["Low","Medium","High","Delinquent"]. 1 lakh = 100000 INR, 1 crore = 10000000 INR.`;
+    try {
+      const j = await SAMPLE.json(`Turn this question about a construction-materials credit portfolio into filters.\n${schema}\nQuestion: ${q}`, { modelTier: "quick" });
+      const arr = v => Array.isArray(v) ? v.map(String) : [];
+      let rows = visibleDevs().filter(d =>
+        (!arr(j.segments).length || arr(j.segments).includes(d.segment)) && (!arr(j.cities).length || arr(j.cities).includes(d.city)) &&
+        (!arr(j.rms).length || arr(j.rms).includes(d.rm)) && (!arr(j.tiers).length || arr(j.tiers).includes(d.tier)) &&
+        d.outstanding >= (+j.min_outstanding_inr || 0) && d.od60 >= (+j.min_overdue_60_plus_inr || 0) && d.max_dpd >= (+j.min_days_past_due || 0) && d.score <= (+j.max_score || 900));
+      const key = { outstanding: "outstanding", overdue_60_plus: "od60", days_past_due: "max_dpd" }[j.sort_by];
+      if (key) { rows.sort((a, b) => b[key] - a[key]); S.sort = { key, dir: -1 }; } else S.sort = { key: "priorityRank", dir: 1 };
+      if (+j.limit > 0) rows = rows.slice(0, +j.limit);
+      S.f = { tier: null, exp: null, q: "", seg: "", city: "", aiIds: rows.map(d => d.id), aiLabel: "Filter: " + (j.summary || q), aiQ: q };
+      render();
+    } catch (err) { st.textContent = err?.code === "invalid_json" ? "Couldn't turn that into a filter. Try rephrasing." : aiErr(err?.code); }
+  }
+});
+app.addEventListener("input", e => {
+  const id = e.target.id;
+  if (id === "q") { S.f.q = e.target.value; const pos = e.target.selectionStart; render(); const el = document.getElementById("q"); el.focus(); el.setSelectionRange(pos, pos); }
+  if (id.startsWith("sim-") && e.target.type === "range") {
+    S.sim[id.slice(4)] = parseFloat(e.target.value);
+    if (S.sim.high <= S.sim.med) S.sim.high = S.sim.med + 0.01;
+    const keep = id; render(); document.getElementById(keep)?.focus();
+  }
+});
+app.addEventListener("change", e => {
+  const id = e.target.id;
+  if (id === "seg") { S.f.seg = e.target.value; render(); }
+  if (id === "city") { S.f.city = e.target.value; render(); }
+  if (id === "acct-pick") go("account", e.target.value);
+  if (id === "sim-seg") { S.sim.seg = e.target.value; render(); }
+});
+
+route();
+})();
+</script>
